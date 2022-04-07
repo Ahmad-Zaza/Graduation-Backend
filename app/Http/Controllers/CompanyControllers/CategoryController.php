@@ -3,24 +3,36 @@
 namespace App\Http\Controllers\CompanyControllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+
+use App\Models\CompanyModels\Category;
 use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
+
     use QueryTrait;
+
     public function __construct()
     {
         $this->middleware('assign.guard:company-api')->except('');
     }
 
-    public function index()
+    public function index($company_id)
     {
+        // check authorization
+        $check = Gate::allows('index', [Category::class, $company_id]);
+        if ($check == false) {
+            return $this->errorMessage(null, '403', 'This action is unauthorized');
+        }
         $per_page = request()->per_page ?? 10;
 
-        $categories = Category::all()->paginate($per_page);
+        $categories = Category::where('company_id', $company_id)
+            ->paginate($per_page);
+
         if ($categories) {
             return $this->successMessage($categories, '200');
         } else {
@@ -36,6 +48,11 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
+        // check authorization
+        $check = Gate::allows('create', [Category::class, $request->company_id]);
+        if ($check == false) {
+            return $this->errorMessage(null, '403', 'This action is unauthorized');
+        }
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
         ]);
@@ -46,12 +63,22 @@ class CategoryController extends Controller
 
         $category = Category::create($request->all());
 
+        // $category->company()->syncWithoutDetaching($request->company_id);
+
+        $category['company'] = $category->company();
+
         return $this->successMessage($category, '200');
     }
 
 
     public function show($id)
     {
+        // check authorization
+        $check = Gate::allows('view', Category::class);
+        if ($check == false) {
+            return $this->errorMessage(null, '403', 'This action is unauthorized');
+        }
+
         $category = Category::find($id);
         if ($category) {
             return $this->successMessage($category, '200');
@@ -69,6 +96,13 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $category = Category::find($id);
+
+        // check authorization
+        $check = Gate::allows('update', [Category::class, $category->company_id]);
+        if ($check == false) {
+            return $this->errorMessage(null, '403', 'This action is unauthorized');
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
         ]);

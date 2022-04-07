@@ -41,6 +41,7 @@ class AuthController extends Controller
             ], 400);
         }
         $comp_user = Auth::guard('company-api')->user();
+        $comp_user['token'] = $token;
 
         return response()->json([
             'result' => $comp_user,
@@ -81,7 +82,7 @@ class AuthController extends Controller
             'phone_number' => $request->phone_number,
             'email' => $request->phone_number,
             'password' => $request->password,
-
+            'company_id' => $request->company_id
         ]);
 
         $token = JWTAuth::fromUser($comp_user);

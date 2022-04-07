@@ -2,6 +2,7 @@
 
 namespace App\Models\CompanyModels;
 
+use App\Models\Company;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -18,12 +19,19 @@ class CompanyUser extends Authenticatable implements JWTSubject
         'first_name',
         'last_name',
         'username',
+        'company_id',
         'email',
         'password',
         'phone_number',
         'user_type',
         'photo_id'
     ];
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
 
     public function setPasswordAttribute($password)
     {
