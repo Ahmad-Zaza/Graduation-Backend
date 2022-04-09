@@ -28,6 +28,14 @@ Route::group(['prefix' => 'company'], function () {
     Route::post('/new-admin', [MainCompanyController::class, 'addNewAdmin'])->name('company.new-admin');
     Route::post('/new-driver', [MainCompanyController::class, 'addNewDriver'])->name('company.new-driver');
     Route::get('/company-users/{company_id}', [MainCompanyController::class, 'getCompanyUsers'])->name('company.all-users');
-    // product and product types
+    // product
     Route::post('/new-product', [ProductController::class, 'addNewProduct'])->name('company.new-product');
+    Route::put('/update-product/{product_id}', [ProductController::class, 'updateProduct'])->name('company.update-product');
+    Route::get('/products/{company_id}', [ProductController::class, 'viewAllProducts'])->name('company.products.index');
+    Route::get('/product/{product_id}', [ProductController::class, 'viewProduct'])->name('company.product.show');
+    //product types
+    Route::post('/new-product_type', [ProductController::class, 'addNewProductType'])->name('company.new-product_type');
+    Route::put('/update-product_type/{product_type_id}', [ProductController::class, 'updateProductType'])->name('company.update-product_type');
+    Route::get('/product_types/{company_id}', [ProductController::class, 'viewAllProductTypes'])->name('company.product_types.index');
+    Route::get('/product_type/{product_type_id}', [ProductController::class, 'viewProductType'])->name('company.product_type.show');
 });
