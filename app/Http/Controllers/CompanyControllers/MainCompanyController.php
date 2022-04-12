@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CompanyModels\CompanyUser;
 use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MainCompanyController extends Controller
 {
@@ -25,14 +26,17 @@ class MainCompanyController extends Controller
 
     public function addNewAdmin(Request $request)
     {
-        $admin = CompanyUser::where('username', $request->username)
-            ->where('company_id', $request->company_id)
-            ->where('user_type', $request->user_type)
-            ->get()
-            ->first();
+        $validator = Validator::make($request->all(), [
+            'company_id' => 'required|exists:companies,id',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'username' => 'required|string|unique:company_users,username',
+            "user_type" => 'required|numeric',
+            "password" => 'required|confirmed',
+        ]);
 
-        if ($admin) {
-            return $this->errorMessage(null, '401', 'this username is founded before !!');
+        if ($validator->fails()) {
+            return $this->errorMessage(null, '', $validator->errors());
         }
 
         $admin_comp_user = CompanyUser::create($request->all());
@@ -42,14 +46,17 @@ class MainCompanyController extends Controller
 
     public function addNewDriver(Request $request)
     {
-        $driver = CompanyUser::where('username', $request->username)
-            ->where('company_id', $request->company_id)
-            ->where('user_type', $request->user_type)
-            ->get()
-            ->first();
+        $validator = Validator::make($request->all(), [
+            'company_id' => 'required|exists:companies,id',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'username' => 'required|string|unique:company_users,username',
+            "user_type" => 'required|numeric',
+            "password" => 'required|confirmed',
+        ]);
 
-        if ($driver) {
-            return $this->errorMessage(null, '401', 'this username is founded before !!');
+        if ($validator->fails()) {
+            return $this->errorMessage(null, '', $validator->errors());
         }
 
         $driver_comp_user = CompanyUser::create($request->all());

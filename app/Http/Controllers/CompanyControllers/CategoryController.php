@@ -55,6 +55,7 @@ class CategoryController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
+            'company_id' => 'required|exists:companies,id'
         ]);
 
         if ($validator->fails()) {
@@ -105,6 +106,7 @@ class CategoryController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
+            'company_id' => 'required|exists:companies,id'
         ]);
 
         if ($validator->fails()) {

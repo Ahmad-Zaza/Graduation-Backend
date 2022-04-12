@@ -25,4 +25,9 @@ class Company extends Model
     {
         return $this->hasMan(ProductType::class);
     }
+
+    public function trucks()
+    {
+        return $this->hasMany(Truck::class);
+    }
 }

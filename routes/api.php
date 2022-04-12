@@ -5,6 +5,7 @@ use App\Http\Controllers\CompanyControllers\AuthController as CompanyControllers
 use App\Http\Controllers\CompanyControllers\CategoryController;
 use App\Http\Controllers\CompanyControllers\MainCompanyController;
 use App\Http\Controllers\CompanyControllers\ProductController;
+use App\Http\Controllers\CompanyControllers\TruckController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,4 +39,9 @@ Route::group(['prefix' => 'company'], function () {
     Route::put('/update-product_type/{product_type_id}', [ProductController::class, 'updateProductType'])->name('company.update-product_type');
     Route::get('/product_types/{company_id}', [ProductController::class, 'viewAllProductTypes'])->name('company.product_types.index');
     Route::get('/product_type/{product_type_id}', [ProductController::class, 'viewProductType'])->name('company.product_type.show');
+    // truck
+    Route::post('/new-truck', [TruckController::class, 'addNewTruck'])->name('company.new-truck');
+    Route::put('/update-truck/{truck_id}', [TruckController::class, 'updateTruck'])->name('company.update-truck');
+    Route::get('/truck/{truck_id}', [TruckController::class, 'viewTruck'])->name('company.truck.show');
+    Route::get('/trucks/{company_id}', [TruckController::class, 'viewAllTrucks'])->name('company.trucks.index');
 });

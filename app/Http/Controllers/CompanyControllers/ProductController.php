@@ -56,6 +56,7 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|unique:products,name',
             'price' => 'required|numeric',
+            'category_id' => 'required|exists:categories,id'
         ]);
 
         if ($validator->fails()) {
@@ -99,7 +100,8 @@ class ProductController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|unique:products,name,' . $product->id . ' ,id',
-            'price' => 'required|numeric'
+            'price' => 'required|numeric',
+            'category_id' => 'required|exists:categories,id'
         ]);
         if ($validator->fails()) {
             return $this->errorMessage(null, '', $validator->errors());
@@ -119,6 +121,7 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
+            'company_id' => 'required|exists:companies,id'
         ]);
         if ($validator->fails()) {
             return $this->errorMessage(null, '', $validator->errors());
@@ -139,6 +142,7 @@ class ProductController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
+            'company_id' => 'required|exists:companies,id'
         ]);
         if ($validator->fails()) {
             return $this->errorMessage(null, '', $validator->errors());
