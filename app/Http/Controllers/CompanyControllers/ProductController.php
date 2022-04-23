@@ -9,6 +9,7 @@ use App\Models\CompanyModels\Product;
 use App\Models\CompanyModels\ProductType;
 use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -166,5 +167,26 @@ class ProductController extends Controller
             ->paginate($per_page);
 
         return $this->successMessage($product_types, '200');
+    }
+
+    public function ProductQuerySearch()
+    {
+        $searchText = request()->searchText;
+
+        //   (SELECT products.name, products.category_id as cat_id
+        //     FROM products where products.category_id IN
+        //     (SELECT categories.id as category_id
+        //     FROM categories
+        //      WHERE categories.company_id = 2)
+        $company_id = Auth::guard('company-api')->user()->company_id;
+        $products = DB::table('products')
+            ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->where('categories.company_id', '=', $company_id)
+            ->select('products.id', 'products.name as prod_name', 'products.price', 'categories.name')
+            ->limit(5)
+            ->get();
+
+
+        return $this->successMessage($products, '200');
     }
 }

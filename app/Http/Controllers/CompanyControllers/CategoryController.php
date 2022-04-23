@@ -121,6 +121,19 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        //
+        $category = Category::find($id);
+        $category->delete();
+        return $this->response(null, '200', 'category deleted successfully');
+    }
+
+    public function categoryQuerySearch()
+    {
+        $company_id = Auth::guard('company-api')->user()->company_id;
+        $searchText = request()->searchText;
+        $categories = Category::where('company_id', $company_id)
+            ->where('name', 'LIKE', '%' . $searchText . '%')
+            ->limit(5)
+            ->get();
+        return $this->successMessage($categories, '200');
     }
 }

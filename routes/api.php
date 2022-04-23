@@ -5,7 +5,10 @@ use App\Http\Controllers\CompanyControllers\AuthController as CompanyControllers
 use App\Http\Controllers\CompanyControllers\CategoryController;
 use App\Http\Controllers\CompanyControllers\MainCompanyController;
 use App\Http\Controllers\CompanyControllers\ProductController;
+use App\Http\Controllers\CompanyControllers\SubscriptionController as CompanyControllersSubscriptionController;
 use App\Http\Controllers\CompanyControllers\TruckController;
+use App\Http\Controllers\RetailDealerControllers\AuthController;
+use App\Http\Controllers\RetailDealerControllers\SubscriptionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +28,7 @@ Route::group(['prefix' => 'company'], function () {
     Route::get('/category/{category_id}', [CategoryController::class, 'show'])->name('company.category.show');
     Route::put('/category/{category_id}', [CategoryController::class, 'update'])->name('company.category.update');
     Route::delete('/category/{category_id', [CategoryController::class, 'destroy'])->name('company.category.destroy');
+    Route::get('category-search', [CategoryController::class, 'categoryQuerySearch'])->name('company.category-QuerySearch');
     // company users
     Route::post('/new-admin', [MainCompanyController::class, 'addNewAdmin'])->name('company.new-admin');
     Route::post('/new-driver', [MainCompanyController::class, 'addNewDriver'])->name('company.new-driver');
@@ -34,6 +38,7 @@ Route::group(['prefix' => 'company'], function () {
     Route::put('/update-product/{product_id}', [ProductController::class, 'updateProduct'])->name('company.update-product');
     Route::get('/products/{company_id}', [ProductController::class, 'viewAllProducts'])->name('company.products.index');
     Route::get('/product/{product_id}', [ProductController::class, 'viewProduct'])->name('company.product.show');
+    Route::get('/product-search', [ProductController::class, 'ProductQuerySearch'])->name('company.product-QuerySearch');
     //product types
     Route::post('/new-product_type', [ProductController::class, 'addNewProductType'])->name('company.new-product_type');
     Route::put('/update-product_type/{product_type_id}', [ProductController::class, 'updateProductType'])->name('company.update-product_type');
@@ -44,4 +49,13 @@ Route::group(['prefix' => 'company'], function () {
     Route::put('/update-truck/{truck_id}', [TruckController::class, 'updateTruck'])->name('company.update-truck');
     Route::get('/truck/{truck_id}', [TruckController::class, 'viewTruck'])->name('company.truck.show');
     Route::get('/trucks/{company_id}', [TruckController::class, 'viewAllTrucks'])->name('company.trucks.index');
+    // subscribes
+    Route::get('/subscribes-requests', [CompanyControllersSubscriptionController::class, 'getAllRequests'])->name('company.subscribes_requests.index');
+    Route::delete('/update-request/{req_id}', [CompanyControllersSubscriptionController::class, 'editRequest'])->name('company.subscribe_request.edit');
+});
+
+Route::group(['prefix' => 'retail-dealer'], function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/sign-up', [AuthController::class, 'signUp']);
+    Route::post('send-subscribe-request', [SubscriptionController::class, 'sendSubscribeRequest'])->name('retaild_dealer.send_subscription_request');
 });

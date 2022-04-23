@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\App;
+
 return [
 
     /*
@@ -53,6 +55,11 @@ return [
             'provider' => 'compUsers',
         ],
 
+        'retail-dealer-api' => [
+            'driver' => 'jwt',
+            'provider' => 'retailDealers'
+        ]
+
     ],
 
     /*
@@ -80,8 +87,12 @@ return [
 
         'compUsers' => [
             'driver' => 'eloquent',
-            'model' => App\Models\CompanyModels\CompanyUser::class,
+            'model' => \App\Models\CompanyModels\CompanyUser::class,
         ],
+        'retailDealers' => [
+            'driver' => 'eloquent',
+            'model' => \App\Models\RetailDealersModel\RetailDealer::class,
+        ]
 
         // 'users' => [
         //     'driver' => 'database',
