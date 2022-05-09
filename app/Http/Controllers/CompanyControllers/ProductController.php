@@ -45,23 +45,45 @@ class ProductController extends Controller
         }
     }
 
+    public function viewAllProductByCategoryId($category_id)
+    {
+        $category = Category::find($category_id);
+
+        $per_page = request()->per_page ?? 10;
+
+        $products = DB::table('products')
+            ->join('categories', function ($join) use ($category_id) {
+                $join->on('products.category_id', '=', 'categories.id');
+                $join->where('products.category_id', '=', $category_id);
+            })
+            ->where('categories.company_id', '=', $category->company_id)
+            ->select('products.id', 'products.name as prod_name', 'products.price', 'categories.name')
+            ->paginate($per_page);
+
+        if ($products) {
+            return $this->successMessage($products, '200');
+        } else {
+            return $this->errorMessage(null, '414', 'No products founded!!');
+        }
+    }
+
     public function addNewProduct(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|unique:products,name',
+            'price' => 'required|numeric',
+            'category_id' => 'required|exists:categories,id',
+            'product_type_id' => 'required|exists:product_types,id'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorMessage(null, '404', $validator->errors());
+        }
         $category = Category::find($request->category_id);
         // check authorization
         $check = Gate::allows('create', [Product::class, $category->company_id]);
         if ($check == false) {
             return $this->errorMessage(null, '403', 'This action is unauthorized');
-        }
-
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|unique:products,name',
-            'price' => 'required|numeric',
-            'category_id' => 'required|exists:categories,id'
-        ]);
-
-        if ($validator->fails()) {
-            return $this->errorMessage(null, '404', $validator->errors());
         }
 
         $product = Product::create([
@@ -72,6 +94,9 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'product_type_id' => $request->product_type_id
         ]);
+
+        $product['category'] = Category::find($product->category_id);
+        $product['product_type'] = ProductType::find($product->product_type_id);
 
         return $this->successMessage($product, '200');
     }
@@ -102,7 +127,8 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|unique:products,name,' . $product->id . ' ,id',
             'price' => 'required|numeric',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|exists:categories,id',
+            'product_type_id' => 'required|exists:product_types,id'
         ]);
         if ($validator->fails()) {
             return $this->errorMessage(null, '', $validator->errors());

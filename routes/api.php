@@ -40,6 +40,7 @@ Route::group(['prefix' => 'company'], function () {
     Route::get('/products/{company_id}', [ProductController::class, 'viewAllProducts'])->name('company.products.index');
     Route::get('/product/{product_id}', [ProductController::class, 'viewProduct'])->name('company.product.show');
     Route::get('/product-search', [ProductController::class, 'ProductQuerySearch'])->name('company.product-QuerySearch');
+    Route::get('/products-category/{category_id}', [ProductController::class, 'viewAllProductByCategoryId'])->name('company.category_products.index');
     //product types
     Route::post('/new-product_type', [ProductController::class, 'addNewProductType'])->name('company.new-product_type');
     Route::put('/update-product_type/{product_type_id}', [ProductController::class, 'updateProductType'])->name('company.update-product_type');

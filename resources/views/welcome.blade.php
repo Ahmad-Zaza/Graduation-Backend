@@ -70,40 +70,41 @@
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"
         integrity="sha384-LzhRnpGmQP+lOvWruF/lgkcqD+WDVt9fU3H4BWmwP5u5LTmkUGafMcpZKNObVMLU" crossorigin="anonymous">
     </script>
-    <script src="{{ mix('js/app.js') }}" defer></script>
+    {{-- <script src="{{ mix('js/app.js') }}" defer></script> --}}
 
     <script>
-        /*$(function() {
-                                                                        let ip_address = 'localhost';
-                                                                        let socket_port = '3000';
-                                                                        let socket = io(ip_address + ':' + socket_port);
-                                                                        let chatInput = $('#chatInput');
-                                                                        chatInput.keypress(function(e) {
-                                                                            let message = $(this).html();
-                                                                            console.log(message);
-                                                                            if (e.which === 13 && !e.shiftKey) {
-                                                                                socket.emit('sendChatToServer', message);
-                                                                                chatInput.html('');
-                                                                                return false;
-                                                                            }
-                                                                        });
-                                                                        console.log("authenticated user===", `{{ $user }}`);
-                                                                        socket.on('connect', function() {
-                                                                            socket.emit('user_connected', 1);
-                                                                        });
+        $(function() {
+            let ip_address = 'localhost';
+            let socket_port = '3000';
+            let socket = io(ip_address + ':' + socket_port);
+            let chatInput = $('#chatInput');
+            chatInput.keypress(function(e) {
+                let message = $(this).html();
+                console.log(message);
+                if (e.which === 13 && !e.shiftKey) {
+                    socket.emit('sendChatToServer', message);
+                    chatInput.html('');
+                    return false;
+                }
+            });
 
-                                                                        socket.on('sendChatToClient', (message) => {
-                                                                            console.log("we listentd here==============");
-                                                                            $('.chat-content ul').append(`<li>${message}</li>`);
-                                                                        });
+            socket.on('connect', function() {
+                socket.emit('user_connected', 1);
+                var arr = [1, 2, 3, 4, 5];
+                socket.emit('join_room', "private-channel", 1);
+            });
 
-                                                                        socket.on("private-channel:App\\Events\\TestEvent", function(message) {
-                                                                            console.log("listented to privateeeeee", message);
-                                                                            alert(message);
-                                                                        });
-                                                                        console.log("socket", socket)
-                                                                    });
-                                                                    */
+            socket.on('sendChatToClient', (message) => {
+                console.log("we listentd here==============");
+                $('.chat-content ul').append(`<li>${message}</li>`);
+            });
+
+            socket.on("private-channel:App\\Events\\TestEvent", function(ff) {
+                console.log("listented to privateeeeee", ff);
+                alert(ff);
+            });
+            console.log("socket", socket)
+        });
     </script>
 </body>
 

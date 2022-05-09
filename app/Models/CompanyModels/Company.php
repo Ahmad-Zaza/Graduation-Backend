@@ -23,11 +23,16 @@ class Company extends Model
 
     public function productTypes()
     {
-        return $this->hasMan(ProductType::class);
+        return $this->hasMany(ProductType::class);
     }
 
     public function trucks()
     {
         return $this->hasMany(Truck::class);
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class);
     }
 }

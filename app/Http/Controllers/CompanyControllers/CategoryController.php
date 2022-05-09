@@ -6,6 +6,7 @@ use App\Events\TestEvent;
 use App\Http\Controllers\Controller;
 
 use App\Models\CompanyModels\Category;
+use App\Models\CompanyModels\Company;
 use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -84,6 +85,8 @@ class CategoryController extends Controller
         if ($check == false) {
             return $this->errorMessage(null, '403', 'This action is unauthorized');
         }
+        $category['company'] = Company::find($category->company_id);
+        $category['products-count'] = $category->products()->count();
         if ($category) {
             return $this->successMessage($category, '200');
         } else {
