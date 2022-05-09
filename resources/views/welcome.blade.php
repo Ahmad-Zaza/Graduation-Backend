@@ -10,6 +10,7 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- CSS only -->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <style>
@@ -45,7 +46,7 @@
 </head>
 
 <body>
-
+    <h1>user is </h1>{{ Auth::guard('company-api')->user() }}
     <div class="container">
         <div class="row chat-row">
             <div class="chat-content">
@@ -69,28 +70,40 @@
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"
         integrity="sha384-LzhRnpGmQP+lOvWruF/lgkcqD+WDVt9fU3H4BWmwP5u5LTmkUGafMcpZKNObVMLU" crossorigin="anonymous">
     </script>
-
+    <script src="{{ mix('js/app.js') }}" defer></script>
 
     <script>
-        $(function() {
-            let ip_address = 'localhost';
-            let socket_port = '3000';
-            let socket = io(ip_address + ':' + socket_port);
-            let chatInput = $('#chatInput');
-            chatInput.keypress(function(e) {
-                let message = $(this).html();
-                console.log(message);
-                if (e.which === 13 && !e.shiftKey) {
-                    socket.emit('sendChatToServer', message);
-                    chatInput.html('');
-                    return false;
-                }
-            });
-            socket.on('sendChatToClient', (message) => {
-                console.log("we listentd here==============");
-                $('.chat-content ul').append(`<li>${message}</li>`);
-            });
-        });
+        /*$(function() {
+                                                                        let ip_address = 'localhost';
+                                                                        let socket_port = '3000';
+                                                                        let socket = io(ip_address + ':' + socket_port);
+                                                                        let chatInput = $('#chatInput');
+                                                                        chatInput.keypress(function(e) {
+                                                                            let message = $(this).html();
+                                                                            console.log(message);
+                                                                            if (e.which === 13 && !e.shiftKey) {
+                                                                                socket.emit('sendChatToServer', message);
+                                                                                chatInput.html('');
+                                                                                return false;
+                                                                            }
+                                                                        });
+                                                                        console.log("authenticated user===", `{{ $user }}`);
+                                                                        socket.on('connect', function() {
+                                                                            socket.emit('user_connected', 1);
+                                                                        });
+
+                                                                        socket.on('sendChatToClient', (message) => {
+                                                                            console.log("we listentd here==============");
+                                                                            $('.chat-content ul').append(`<li>${message}</li>`);
+                                                                        });
+
+                                                                        socket.on("private-channel:App\\Events\\TestEvent", function(message) {
+                                                                            console.log("listented to privateeeeee", message);
+                                                                            alert(message);
+                                                                        });
+                                                                        console.log("socket", socket)
+                                                                    });
+                                                                    */
     </script>
 </body>
 

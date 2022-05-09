@@ -1,5 +1,7 @@
 <?php
 
+use App\Events\TestEvent;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +16,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+
+    event(new TestEvent(null));
+    $user = Auth::guard('company-api')->check();
+    // Debugbar::info("debugerrr", [$user]);
+    return view('welcome', ['user' => $user]);
 });
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

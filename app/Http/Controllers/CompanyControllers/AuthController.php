@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\CompanyControllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompanyModels\Company;
 use App\Models\CompanyModels\CompanyUser;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -42,6 +43,7 @@ class AuthController extends Controller
         }
         $comp_user = Auth::guard('company-api')->user();
         $comp_user['token'] = $token;
+        $comp_user['company'] = Company::find($comp_user->company_id);
 
         return response()->json([
             'result' => $comp_user,

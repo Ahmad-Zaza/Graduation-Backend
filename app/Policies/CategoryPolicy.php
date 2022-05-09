@@ -23,9 +23,9 @@ class CategoryPolicy
     }
 
 
-    public function view(CompanyUser $user, Category $category)
+    public function view(CompanyUser $user,  $company_id)
     {
-        return $user->company_id == $category->company_id;
+        return $user->user_type == 1 && $user->company_id == $company_id;
     }
 
     public function create(CompanyUser $user, $company_id)

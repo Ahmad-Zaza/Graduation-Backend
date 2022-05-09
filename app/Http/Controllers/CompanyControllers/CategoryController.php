@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\CompanyControllers;
 
+use App\Events\TestEvent;
 use App\Http\Controllers\Controller;
 
 use App\Models\CompanyModels\Category;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
+use PhpParser\Node\Expr\Eval_;
 
 class CategoryController extends Controller
 {
@@ -67,7 +69,7 @@ class CategoryController extends Controller
         // $category->company()->syncWithoutDetaching($request->company_id);
 
         $category['company'] = $category->company();
-
+        event(new TestEvent(Auth::guard('company-api')->user()));
         return $this->successMessage($category, '200');
     }
 
@@ -75,12 +77,13 @@ class CategoryController extends Controller
     public function show($id)
     {
         // check authorization
-        $check = Gate::allows('view', Category::class);
+
+
+        $category = Category::find($id);
+        $check = Gate::allows('view', [Category::class, $category->company_id]);
         if ($check == false) {
             return $this->errorMessage(null, '403', 'This action is unauthorized');
         }
-
-        $category = Category::find($id);
         if ($category) {
             return $this->successMessage($category, '200');
         } else {

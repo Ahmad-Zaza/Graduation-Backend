@@ -182,6 +182,7 @@ class ProductController extends Controller
         $products = DB::table('products')
             ->join('categories', 'products.category_id', '=', 'categories.id')
             ->where('categories.company_id', '=', $company_id)
+            ->where('products.name', 'like', '%' . $searchText . '%')
             ->select('products.id', 'products.name as prod_name', 'products.price', 'categories.name')
             ->limit(5)
             ->get();

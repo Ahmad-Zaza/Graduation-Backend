@@ -8,6 +8,7 @@ use App\Http\Controllers\CompanyControllers\ProductController;
 use App\Http\Controllers\CompanyControllers\SubscriptionController as CompanyControllersSubscriptionController;
 use App\Http\Controllers\CompanyControllers\TruckController;
 use App\Http\Controllers\RetailDealerControllers\AuthController;
+use App\Http\Controllers\RetailDealerControllers\OrderController;
 use App\Http\Controllers\RetailDealerControllers\SubscriptionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,10 +25,10 @@ Route::group(['prefix' => 'company'], function () {
     Route::post('/guard', [CompanyControllersAuthController::class, 'guard']);
     // category
     Route::post('/category', [CategoryController::class, 'store'])->name('company.category.store');
-    Route::get('/category/{company_id}', [CategoryController::class, 'index'])->name('company.categories.index');
+    Route::get('/company-categories/{company_id}', [CategoryController::class, 'index'])->name('company.categories.index');
     Route::get('/category/{category_id}', [CategoryController::class, 'show'])->name('company.category.show');
     Route::put('/category/{category_id}', [CategoryController::class, 'update'])->name('company.category.update');
-    Route::delete('/category/{category_id', [CategoryController::class, 'destroy'])->name('company.category.destroy');
+    Route::delete('/category/{category_id}', [CategoryController::class, 'destroy'])->name('company.category.destroy');
     Route::get('category-search', [CategoryController::class, 'categoryQuerySearch'])->name('company.category-QuerySearch');
     // company users
     Route::post('/new-admin', [MainCompanyController::class, 'addNewAdmin'])->name('company.new-admin');
@@ -57,5 +58,9 @@ Route::group(['prefix' => 'company'], function () {
 Route::group(['prefix' => 'retail-dealer'], function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/sign-up', [AuthController::class, 'signUp']);
-    Route::post('send-subscribe-request', [SubscriptionController::class, 'sendSubscribeRequest'])->name('retaild_dealer.send_subscription_request');
+    Route::post('/send-subscribe-request', [SubscriptionController::class, 'sendSubscribeRequest'])->name('retaild_dealer.send_subscription_request');
+    // orders
+    Route::get('/my-companies', [OrderController::class, 'retailDealerCompanies'])->name('retail_dealer.my-companies.index');
+    Route::get('/company-search', [OrderController::class, 'companiesQuerySearch'])->name('retail_dealer.company.search');
+    Route::get('/company-products/{company_id}', [OrderController::class, 'companyProducts'])->name('retail_dealer.company_products.index');
 });
