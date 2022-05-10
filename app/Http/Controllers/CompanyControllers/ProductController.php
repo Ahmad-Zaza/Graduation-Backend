@@ -34,9 +34,23 @@ class ProductController extends Controller
 
         $products = DB::table('products')
             ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->join('product_types', 'product_types.id', '=', 'products.product_type_id')
             ->where('categories.company_id', '=', $company_id)
-            ->select('products.id', 'products.name as prod_name', 'products.price', 'categories.name')
+            ->select(
+                'products.id',
+                'products.name as prod_name',
+                'products.price',
+                'categories.name as category_name',
+                'categories.id as category_id',
+                'product_types.id as product_type_id',
+                'product_types.name as product_type_name'
+            )
             ->paginate($per_page);
+
+        // foreach ($products as $product) {
+        //     $product['category'] = $product->category()->get();
+        //     $product['product_type'] = $product->productType()->get();
+        // }
 
         if ($products) {
             return $this->successMessage($products, '200');
@@ -56,8 +70,17 @@ class ProductController extends Controller
                 $join->on('products.category_id', '=', 'categories.id');
                 $join->where('products.category_id', '=', $category_id);
             })
+            ->join('product_types', 'product_types.id', '=', 'products.product_type_id')
             ->where('categories.company_id', '=', $category->company_id)
-            ->select('products.id', 'products.name as prod_name', 'products.price', 'categories.name')
+            ->select(
+                'products.id',
+                'products.name as prod_name',
+                'products.price',
+                'categories.name as category_name',
+                'categories.id as category_id',
+                'product_types.id as product_type_id',
+                'product_types.name as product_type_name'
+            )
             ->paginate($per_page);
 
         if ($products) {
@@ -110,6 +133,8 @@ class ProductController extends Controller
         if ($check == false) {
             return $this->errorMessage(null, '403', 'This action is unauthorized');
         }
+        $product['category'] = $product->category()->get();
+        $product['product_type'] = $product->productType()->get();
         return $this->successMessage($product, '200');
     }
 
@@ -134,7 +159,8 @@ class ProductController extends Controller
             return $this->errorMessage(null, '', $validator->errors());
         }
         $product->update($request->all());
-
+        $product['category'] = $product->category()->get();
+        $product['product_type'] = $product->productType()->get();
         return $this->successMessage($product, '200');
     }
 

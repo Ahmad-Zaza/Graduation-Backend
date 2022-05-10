@@ -78,8 +78,6 @@ class CategoryController extends Controller
     public function show($id)
     {
         // check authorization
-
-
         $category = Category::find($id);
         $check = Gate::allows('view', [Category::class, $category->company_id]);
         if ($check == false) {
