@@ -19,8 +19,8 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->integer('company_id');
             $table->integer('retail_dealer_id');
-            $table->integer('order_detail_id');
-            $table->integer('company_user_id')->nullable();
+            // $table->integer('order_detail_id');
+            // $table->integer('company_user_id')->nullable();
             $table->integer('status')->default(Config::get('constants.company.order.pending'));
             $table->double('total_price');
 

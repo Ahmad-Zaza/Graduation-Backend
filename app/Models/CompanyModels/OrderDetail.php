@@ -15,4 +15,9 @@ class OrderDetail extends Model
         'product_id',
         'count'
     ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

@@ -54,6 +54,7 @@ Route::group(['prefix' => 'company'], function () {
     // subscribes
     Route::get('/subscribes-requests', [CompanyControllersSubscriptionController::class, 'getAllRequests'])->name('company.subscribes_requests.index');
     Route::delete('/update-request/{req_id}', [CompanyControllersSubscriptionController::class, 'editRequest'])->name('company.subscribe_request.edit');
+    Route::get('/retail-dealers/{company_id}', [CompanyControllersSubscriptionController::class, 'viewAllRetailDealers'])->name('company.retail_dealers.index');
 });
 
 Route::group(['prefix' => 'retail-dealer'], function () {
@@ -64,4 +65,5 @@ Route::group(['prefix' => 'retail-dealer'], function () {
     Route::get('/my-companies', [OrderController::class, 'retailDealerCompanies'])->name('retail_dealer.my-companies.index');
     Route::get('/company-search', [OrderController::class, 'companiesQuerySearch'])->name('retail_dealer.company.search');
     Route::get('/company-products/{company_id}', [OrderController::class, 'companyProducts'])->name('retail_dealer.company_products.index');
+    Route::post('/send-order', [OrderController::class, 'makeOrder'])->name('retail_dealer.order.send');
 });

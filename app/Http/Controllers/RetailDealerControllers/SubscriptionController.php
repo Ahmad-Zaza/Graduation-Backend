@@ -4,7 +4,9 @@ namespace App\Http\Controllers\RetailDealerControllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\CompanyModels\Company;
+use App\Models\CompanyModels\Subscribe;
 use App\Models\RetailDealersModel\SubscribeRequest;
+use App\Services\RetailDealerServices\SubscriptionService;
 use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,37 +17,33 @@ use Illuminate\Support\Facades\Validator;
 class SubscriptionController extends Controller
 {
     use QueryTrait;
-    public function __construct()
+    protected $subscriptionService;
+    public function __construct(SubscriptionService $subscriptionService)
     {
         $this->middleware('assign.guard:retail-dealer-api');
+        $this->subscriptionService = $subscriptionService;
     }
 
     public function getAllCompanies($name)
     {
-        $companies = Company::where('name', $name)
-            ->limit(10);
-        return $this->successMessage($companies, '200');
+        return $this->subscriptionService->getAllCompanies($name);
     }
 
     public function sendSubscribeRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'company_id' => 'required|exists:companies,id',
-            'retail_dealer_id' => 'required|exists:retail_dealers,id'
         ]);
 
         if ($validator->fails()) {
             return $this->errorMessage(null, '', $validator->errors());
         }
 
-        if ($this->checkNotExistingRequest($request->company_id, $request->retail_dealer_id)) {
-            // return response($this->checkNotExistingRequest($request->company_id, $request->retail_dealer_id));
-            return $this->errorMessage(null, '414', 'request sended before !!');
+        if (!Gate::forUser(Auth::guard('retail-dealer-api')->user())->allows('send', [SubscribeRequest::class, $request->retail_dealer_id])) {
+            return $this->errorMessage(null, '403', 'This action is unauthorized');
         }
 
-        $subRequest = SubscribeRequest::create($request->all());
-        $subRequest['status'] = Config::get('constants.retailDealer.subscribeRequest.pending');
-        return $this->successMessage($subRequest, '200');
+        return $this->subscriptionService->sendSubscribeRequest($request);
     }
 
     public function checkNotExistingRequest($company_id, $ret_dea_id)
@@ -53,8 +51,11 @@ class SubscriptionController extends Controller
         $subRequest = SubscribeRequest::where('company_id', $company_id)
             ->where('retail_dealer_id', $ret_dea_id)
             ->first();
-
-        if ($subRequest) {
+        $subRequest1 =
+            Subscribe::where('company_id', $company_id)
+            ->where('retail_dealer_id', $ret_dea_id)
+            ->first();
+        if ($subRequest || $subRequest1) {
             return true;
         }
         return false;

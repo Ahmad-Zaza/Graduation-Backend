@@ -15,7 +15,6 @@ class Order extends Model
         'id',
         'company_id',
         'retail_dealer_id',
-        'order_detail_id',
         'company_user_id',
         'status',
         'total_price'
@@ -25,14 +24,17 @@ class Order extends Model
     {
         return $this->belongsTo(Company::class);
     }
+
     public function retailDealer()
     {
         return $this->belongsTo(RetailDealer::class);
     }
+
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class);
     }
+
     public function driver()
     {
         return $this->belongsTo(CompanyUser::class);

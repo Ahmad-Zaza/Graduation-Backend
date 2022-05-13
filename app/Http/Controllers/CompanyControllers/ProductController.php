@@ -47,6 +47,7 @@ class ProductController extends Controller
             )
             ->paginate($per_page);
 
+
         // foreach ($products as $product) {
         //     $product['category'] = $product->category()->get();
         //     $product['product_type'] = $product->productType()->get();
@@ -215,7 +216,8 @@ class ProductController extends Controller
     public function viewAllProductTypes($company_id)
     {
         $per_page = request()->per_page ?? 10;
-        $product_types = ProductType::where('company_id', $company_id)
+        $product_types = ProductType::withCount('products')
+            ->where('company_id', $company_id)
             ->paginate($per_page);
 
         return $this->successMessage($product_types, '200');
