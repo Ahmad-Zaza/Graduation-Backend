@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\CompanyModels\CompanyUser;
 use App\Models\CompanyModels\Product;
+use App\Models\RetailDealersModel\RetailDealer;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ProductPolicy
@@ -29,6 +30,11 @@ class ProductPolicy
     public function update(CompanyUser $companyUser, $company_id)
     {
         return $companyUser->user_type == 1 && $companyUser->company_id == $company_id;
+    }
+
+    public function viewProducts(RetailDealer $retailDealer, $company_id)
+    {
+        return  $retailDealer->company_id == $company_id;
     }
 
 
