@@ -39,13 +39,14 @@ Route::group(['prefix' => 'company'], function () {
     Route::put('/update-product/{product_id}', [ProductController::class, 'updateProduct'])->name('company.update-product');
     Route::get('/products/{company_id}', [ProductController::class, 'viewAllProducts'])->name('company.products.index');
     Route::get('/product/{product_id}', [ProductController::class, 'viewProduct'])->name('company.product.show');
-    Route::get('/product-search', [ProductController::class, 'ProductQuerySearch'])->name('company.product-QuerySearch');
+    Route::get('/product-search', [ProductController::class, 'ProductQuerySearch'])->name('company.products.QuerySearch');
     Route::get('/products-category/{category_id}', [ProductController::class, 'viewAllProductByCategoryId'])->name('company.category_products.index');
     //product types
     Route::post('/new-product_type', [ProductController::class, 'addNewProductType'])->name('company.new-product_type');
     Route::put('/update-product_type/{product_type_id}', [ProductController::class, 'updateProductType'])->name('company.update-product_type');
     Route::get('/product_types/{company_id}', [ProductController::class, 'viewAllProductTypes'])->name('company.product_types.index');
     Route::get('/product_type/{product_type_id}', [ProductController::class, 'viewProductType'])->name('company.product_type.show');
+    Route::get('/product-types-search', [ProductController::class, 'productTypeQuerySearch'])->name('company.product_types.QuerySearch');
     // truck
     Route::post('/new-truck', [TruckController::class, 'addNewTruck'])->name('company.new-truck');
     Route::put('/update-truck/{truck_id}', [TruckController::class, 'updateTruck'])->name('company.update-truck');

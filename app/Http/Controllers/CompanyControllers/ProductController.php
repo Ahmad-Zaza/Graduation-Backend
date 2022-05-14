@@ -38,7 +38,7 @@ class ProductController extends Controller
             ->where('categories.company_id', '=', $company_id)
             ->select(
                 'products.id',
-                'products.name as prod_name',
+                'products.name as name',
                 'products.price',
                 'categories.name as category_name',
                 'categories.id as category_id',
@@ -75,7 +75,7 @@ class ProductController extends Controller
             ->where('categories.company_id', '=', $category->company_id)
             ->select(
                 'products.id',
-                'products.name as prod_name',
+                'products.name as name',
                 'products.price',
                 'categories.name as category_name',
                 'categories.id as category_id',
@@ -160,8 +160,8 @@ class ProductController extends Controller
             return $this->errorMessage(null, '', $validator->errors());
         }
         $product->update($request->all());
-        $product['category'] = $product->category()->get();
-        $product['product_type'] = $product->productType()->get();
+        $product['category'] = $product->category()->get()[0];
+        $product['product_type'] = $product->productType()->get()[0];
         return $this->successMessage($product, '200');
     }
 
@@ -243,5 +243,16 @@ class ProductController extends Controller
 
 
         return $this->successMessage($products, '200');
+    }
+
+    public function productTypeQuerySearch()
+    {
+        $company_id = Auth::guard('company-api')->user()->company_id;
+        $searchText = request()->searchText;
+        $productTypes = ProductType::where('company_id', $company_id)
+            ->where('name', 'LIKE', '%' . $searchText . '%')
+            ->limit(5)
+            ->get();
+        return $this->successMessage($productTypes, '200');
     }
 }
