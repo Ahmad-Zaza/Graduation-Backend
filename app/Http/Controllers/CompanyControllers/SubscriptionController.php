@@ -57,9 +57,10 @@ class SubscriptionController extends Controller
         return $this->subscriptionService->editRequest($request, $request_id);
     }
 
-    public function viewAllRetailDealers($company_id)
+    public function viewAllRetailDealers()
     {
-        if (!Gate::allows('viewAllRetailDealers', [Subscribe::class, $company_id])) {
+        $company_id = Auth::guard('company-api')->user()->company_id;
+        if (!Gate::forUser(Auth::guard('company-api')->user())->allows('viewAllRetailDealers', [Subscribe::class, $company_id])) {
             return $this->errorMessage(null, '403', 'This action is unauthorized');
         }
         return $this->subscriptionService->viewAllRetailDealers($company_id);

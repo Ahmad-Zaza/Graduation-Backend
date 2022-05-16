@@ -6,6 +6,10 @@ return [
             'pending' => 2,
             'rejected' => 3
         ],
+        'users' => [
+            'admin_type' => 1,
+            'driver_type' => 2
+        ]
     ],
     'retailDealer' => [
         'subscribeRequest' => [

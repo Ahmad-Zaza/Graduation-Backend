@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\CompanyControllers\AuthController as CompanyControllersAuthController;
 use App\Http\Controllers\CompanyControllers\CategoryController;
+use App\Http\Controllers\CompanyControllers\DriverController;
 use App\Http\Controllers\CompanyControllers\MainCompanyController;
 use App\Http\Controllers\CompanyControllers\ProductController;
 use App\Http\Controllers\CompanyControllers\SubscriptionController as CompanyControllersSubscriptionController;
@@ -55,7 +56,10 @@ Route::group(['prefix' => 'company'], function () {
     // subscribes
     Route::get('/subscribes-requests', [CompanyControllersSubscriptionController::class, 'getAllRequests'])->name('company.subscribes_requests.index');
     Route::delete('/update-request/{req_id}', [CompanyControllersSubscriptionController::class, 'editRequest'])->name('company.subscribe_request.edit');
-    Route::get('/retail-dealers/{company_id}', [CompanyControllersSubscriptionController::class, 'viewAllRetailDealers'])->name('company.retail_dealers.index');
+    Route::get('/retail-dealers', [CompanyControllersSubscriptionController::class, 'viewAllRetailDealers'])->name('company.retail_dealers.index');
+    // drivers
+    Route::get('/drivers', [DriverController::class, 'viewAllDrivers'])->name('company.drivers.index');
+    Route::delete('/delete-driver/{driver_id}', [DriverController::class, 'deleteDriver'])->name('company.driver.delete');
 });
 
 Route::group(['prefix' => 'retail-dealer'], function () {
