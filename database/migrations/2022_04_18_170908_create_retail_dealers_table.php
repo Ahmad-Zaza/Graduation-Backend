@@ -24,6 +24,8 @@ class CreateRetailDealersTable extends Migration
             $table->boolean('account_status')->default(true);
             $table->integer('user_type')->default(0);
             $table->string('photo_id')->nullable();
+            $table->double('longitude');
+            $table->double('latitude');
             $table->timestamps();
         });
     }

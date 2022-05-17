@@ -22,7 +22,9 @@ class RetailDealer extends Authenticatable implements JWTSubject
         'password',
         'phone_number',
         'photo_id',
-        'account_status'
+        'account_status',
+        'longitude',
+        'latitude'
     ];
 
     public function setPasswordAttribute($password)

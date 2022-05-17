@@ -56,6 +56,8 @@ class AuthController extends Controller
             'phone_number' => 'required|string',
             'email' => 'email|max:255',
             'password' => 'required|string|min:6|confirmed',
+            'longitude' => 'required',
+            'latitude' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -72,6 +74,8 @@ class AuthController extends Controller
             'phone_number' => $request->phone_number,
             'email' => $request->phone_number,
             'password' => $request->password,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude
         ]);
 
         $token = JWTAuth::fromUser($retail_dealer);
