@@ -50,33 +50,14 @@ class OrderController extends Controller
             'company_id' => 'required|exists:companies,id',
             'total_price' => 'required|numeric',
             'products' => 'required|array',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.product_count' => 'required|numeric'
         ]);
 
         if ($validator->fails()) {
             return $this->errorMessage(null, '', $validator->errors());
         }
-        // return response($request->products);
-        $order = Order::create([
-            'retail_dealer_id' => $request->retail_dealer_id,
-            'company_id' => $request->company_id,
-            'total_price' => $request->total_price
-        ]);
 
-        foreach ($request->products as $product) {
-            // return response($product['product_id']);
-            $order_detail = new OrderDetail();
-            $order_detail->order_id = $order->id;
-            $order_detail->product_id = $product['product_id'];
-            $order_detail->count = $product['product_count'];
-            $order_detail->save();
-        }
-
-        $order['details'] = $order->orderDetails()->get();
-
-        foreach ($order->details as $order_detail) {
-            $order_detail['product'] = Product::find($order_detail->product_id);
-        }
-
-        return $this->successMessage($order, '200');
+        return $this->orderService->makeOrder($request);
     }
 }

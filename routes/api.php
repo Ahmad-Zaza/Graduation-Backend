@@ -5,6 +5,7 @@ use App\Http\Controllers\CompanyControllers\AuthController as CompanyControllers
 use App\Http\Controllers\CompanyControllers\CategoryController;
 use App\Http\Controllers\CompanyControllers\DriverController;
 use App\Http\Controllers\CompanyControllers\MainCompanyController;
+use App\Http\Controllers\CompanyControllers\OrderController as CompanyControllersOrderController;
 use App\Http\Controllers\CompanyControllers\ProductController;
 use App\Http\Controllers\CompanyControllers\SubscriptionController as CompanyControllersSubscriptionController;
 use App\Http\Controllers\CompanyControllers\TruckController;
@@ -60,6 +61,8 @@ Route::group(['prefix' => 'company'], function () {
     // drivers
     Route::get('/drivers', [DriverController::class, 'viewAllDrivers'])->name('company.drivers.index');
     Route::delete('/delete-driver/{driver_id}', [DriverController::class, 'deleteDriver'])->name('company.driver.delete');
+    //orders
+    Route::get('/orders', [CompanyControllersOrderController::class, 'viewAllOrders'])->name('company.orders.index');
 });
 
 Route::group(['prefix' => 'retail-dealer'], function () {

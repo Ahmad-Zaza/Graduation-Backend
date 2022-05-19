@@ -3,8 +3,12 @@
 namespace App\Services\RetailDealerServices;
 
 use App\Models\CompanyModels\Company;
+use App\Models\CompanyModels\Order;
+use App\Models\CompanyModels\OrderDetail;
+use App\Models\CompanyModels\Product;
 use App\Models\RetailDealersModel\RetailDealer;
 use App\Traits\QueryTrait;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -56,5 +60,31 @@ class OrderService
             ->select('products.*')
             ->paginate($per_page);
         return (new static)->successMessage($products, '200');
+    }
+
+    public static function makeOrder(Request $request)
+    {
+        $order = Order::create([
+            'retail_dealer_id' => $request->retail_dealer_id,
+            'company_id' => $request->company_id,
+            'total_price' => $request->total_price
+        ]);
+
+        foreach ($request->products as $product) {
+            // return response($product['product_id']);
+            $order_detail = new OrderDetail();
+            $order_detail->order_id = $order->id;
+            $order_detail->product_id = $product['product_id'];
+            $order_detail->count = $product['product_count'];
+            $order_detail->save();
+        }
+
+        $order['details'] = $order->orderDetails()->get();
+
+        foreach ($order->details as $order_detail) {
+            $order_detail['product'] = Product::find($order_detail->product_id);
+        }
+
+        return (new static)->successMessage($order, '200');
     }
 }

@@ -32,6 +32,11 @@ class CompanyUser extends Authenticatable implements JWTSubject
         return $this->belongsTo(Company::class);
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
 
     public function setPasswordAttribute($password)
     {
