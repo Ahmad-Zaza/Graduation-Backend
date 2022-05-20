@@ -11,6 +11,7 @@ use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
@@ -59,5 +60,22 @@ class SubscriptionController extends Controller
             return true;
         }
         return false;
+    }
+
+    public function unsubscribedCompanies()
+    {
+        $per_page = request()->per_page ?? 10;
+        $ret_deal_id = Auth::guard('retail-dealer-api')->user()->id;
+        $companies = DB::table('companies')
+            ->select(
+                'companies.*'
+            )
+            ->whereNotIn('companies.id', function ($query) use ($ret_deal_id) {
+                $query->select('subscribes.company_id')->from('subscribes')
+                    ->where('subscribes.retail_dealer_id', $ret_deal_id);
+            })
+            ->paginate($per_page);
+
+        return $this->successMessage($companies, '200');
     }
 }

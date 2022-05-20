@@ -30,7 +30,7 @@ class OrderController extends Controller
         return $this->orderService->retailDealerCompanies();
     }
 
-    public function companiesQuerySearch()
+    public function zcompaniesQuerySearch()
     {
         return $this->orderService->companiesQuerySearch();
     }
@@ -45,6 +45,7 @@ class OrderController extends Controller
 
     public function makeOrder(Request $request)
     {
+        // gate
         $validator = Validator::make($request->all(), [
             'retail_dealer_id' => 'required|exists:retail_dealers,id',
             'company_id' => 'required|exists:companies,id',
