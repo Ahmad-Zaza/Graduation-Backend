@@ -3,10 +3,16 @@
 namespace App\Http\Controllers\CompanyControllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompanyModels\Company;
 use App\Models\CompanyModels\CompanyUser;
+use App\Models\CompanyModels\Order;
+use App\Models\CompanyModels\Subscribe;
+use App\Models\CompanyModels\Truck;
 use App\Services\CompanyServices\MainCompanyService;
 use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
 
 class MainCompanyController extends Controller
@@ -55,5 +61,15 @@ class MainCompanyController extends Controller
             return $this->errorMessage(null, '', $validator->errors());
         }
         return $this->mainCompanyService->addNewDriver($request);
+    }
+
+    public function getBasicInfo()
+    {
+        $curr_user = Auth::guard('company-api')->user();
+        $company_id = $curr_user->company_id;
+        $info = Order::where('id', $company_id)->count();
+        $info1 = Truck::where('company_id', $company_id)->count();
+        $info2 = Subscribe::where('company_id', $company_id)->count();
+        return $this->successMessage(['orders_count' => $info, 'trucks_count' => $info1, 'subscribes_count' => $info2], '200');
     }
 }

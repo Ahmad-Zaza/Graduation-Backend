@@ -93,9 +93,20 @@ class OrderService
         $per_page = request()->per_page ?? 10;
 
         $orders = Order::with('company')
+            ->withCount('orderDetails')
             ->where('retail_dealer_id', '=', Auth::guard('retail-dealer-api')->user()->id)
             ->paginate($per_page);
 
         return (new static)->successMessage($orders, '200');
+    }
+
+    public static function viewOrderDetails($order_id)
+    {
+        $order_detail = Order::with(['orderDetails' => function ($q) {
+            $q->select('order_id', 'product_id', 'count', 'products.name as product_name')
+                ->join('products', 'products.id', '=', 'product_id');
+        }])
+            ->where('id', $order_id)->get()[0];
+        return (new static)->successMessage($order_detail, '200');
     }
 }

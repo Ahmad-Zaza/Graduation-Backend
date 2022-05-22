@@ -20,12 +20,14 @@ class OrderService
 
         if ($status) {
             $orders = Order::with('retailDealer')
+                ->withCount('orderDetails')
                 ->where('company_id', $company_id)
                 ->where('status', '=', $status)
                 ->orderby('created_at', 'ASC')
                 ->paginate($per_page);
         } else {
             $orders = Order::with('retailDealer')
+                ->withCount('orderDetails')
                 ->where('company_id', $company_id)
                 ->where('company_user_id', '=', null)
                 ->orderby('created_at', 'ASC')
@@ -38,7 +40,7 @@ class OrderService
     public static function viewOrderDetails($order_id)
     {
         $order_detail = Order::with(['orderDetails' => function ($q) {
-            $q->select('order_id', 'product_id', 'count', 'products.name as prod_name')
+            $q->select('order_id', 'product_id', 'count', 'products.name as product_name')
                 ->join('products', 'products.id', '=', 'product_id');
         }])
             ->where('id', $order_id)->get()[0];
@@ -51,6 +53,14 @@ class OrderService
         $order = Order::find($request->order_id);
         $status = 1;
 
+        $order->update($request->all());
+
+        return (new static)->successMessage($order, '200');
+    }
+
+    public static function cancelOrder(Request $request)
+    {
+        $order = Order::find($request->order_id);
         $order->update($request->all());
 
         return (new static)->successMessage($order, '200');

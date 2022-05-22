@@ -66,4 +66,9 @@ class OrderController extends Controller
     {
         return $this->orderService->viewAllOrders();
     }
+
+    public function viewRetailDealerOrderDetails($order_id)
+    {
+        return $this->orderService->viewOrderDetails($order_id);
+    }
 }

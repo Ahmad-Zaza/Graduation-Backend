@@ -38,6 +38,7 @@ class OrderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id',
+            'status' => 'required|numeric',
             'company_user_id' => [ //driver
                 'required',
                 Rule::exists('company_users', 'id'),
@@ -53,5 +54,19 @@ class OrderController extends Controller
         }
 
         return $this->orderService->assignOrderToDriver($request);
+    }
+
+    public function cancelOrder(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required|exists:orders,id',
+            'status' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorMessage(null, '', $validator->errors());
+        }
+
+        return $this->orderService->cancelOrder($request);
     }
 }

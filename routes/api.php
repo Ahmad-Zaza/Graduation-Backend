@@ -28,6 +28,8 @@ Route::group(['prefix' => 'company'], function () {
     Route::get('/test', function () {
         return ['test', 'is', 'done', 'successfully'];
     });
+    // admin info
+    Route::get('/admin-basic-info', [MainCompanyController::class, 'getBasicInfo'])->name('company.basic_info.show');
     // category
     Route::post('/category', [CategoryController::class, 'store'])->name('company.category.store');
     Route::get('/company-categories/{company_id}', [CategoryController::class, 'index'])->name('company.categories.index');
@@ -71,6 +73,7 @@ Route::group(['prefix' => 'company'], function () {
     Route::get('/orders', [CompanyControllersOrderController::class, 'viewAllOrders'])->name('company.orders.index');
     Route::get('/order-details/{order_id}', [CompanyControllersOrderController::class, 'viewOrderDetails'])->name('company.order_details.show');
     Route::put('/assign-order', [CompanyControllersOrderController::class, 'assignOrderToDriver'])->name('company.order.assign');
+    Route::put('/cancel-order', [CompanyControllersOrderController::class, 'cancelOrder'])->name('company.order.cancel');
     //
 });
 
@@ -84,6 +87,7 @@ Route::group(['prefix' => 'retail-dealer'], function () {
     Route::get('/company-products/{company_id}', [OrderController::class, 'companyProducts'])->name('retail_dealer.company_products.index');
     Route::post('/send-order', [OrderController::class, 'makeOrder'])->name('retail_dealer.order.send');
     Route::get('/my-orders', [OrderController::class, 'viewAllOrders'])->name('retail_dealer.my_orders.index');
+    Route::get('/order-details/{order_id}', [OrderController::class, 'viewRetailDealerOrderDetails'])->name('retail_dealer.order_details.show');
     // companies
     Route::get('/unsubscribed-companies', [SubscriptionController::class, 'unsubscribedCompanies'])->name('retail_dealer.unsubscribed_companies.index');
 });
