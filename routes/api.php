@@ -25,6 +25,9 @@ Route::group(['prefix' => 'company'], function () {
     Route::post('/login', [CompanyControllersAuthController::class, 'login']);
     Route::post('/sign-up', [CompanyControllersAuthController::class, 'signUp']);
     Route::post('/guard', [CompanyControllersAuthController::class, 'guard']);
+    Route::get('/test', function () {
+        return ['test', 'is', 'done', 'successfully'];
+    });
     // category
     Route::post('/category', [CategoryController::class, 'store'])->name('company.category.store');
     Route::get('/company-categories/{company_id}', [CategoryController::class, 'index'])->name('company.categories.index');
@@ -43,7 +46,7 @@ Route::group(['prefix' => 'company'], function () {
     Route::get('/product/{product_id}', [ProductController::class, 'viewProduct'])->name('company.product.show');
     Route::get('/product-search', [ProductController::class, 'ProductQuerySearch'])->name('company.products.QuerySearch');
     Route::get('/products-category/{category_id}', [ProductController::class, 'viewAllProductByCategoryId'])->name('company.category_products.index');
-    //product types
+    // product types
     Route::post('/new-product_type', [ProductController::class, 'addNewProductType'])->name('company.new-product_type');
     Route::put('/update-product_type/{product_type_id}', [ProductController::class, 'updateProductType'])->name('company.update-product_type');
     Route::get('/product_types/{company_id}', [ProductController::class, 'viewAllProductTypes'])->name('company.product_types.index');
@@ -61,10 +64,14 @@ Route::group(['prefix' => 'company'], function () {
     // drivers
     Route::get('/drivers', [DriverController::class, 'viewAllDrivers'])->name('company.drivers.index');
     Route::delete('/delete-driver/{driver_id}', [DriverController::class, 'deleteDriver'])->name('company.driver.delete');
-    //orders
+    // drivers orders
+    Route::get('/assigned-driver-orders', [DriverController::class, 'getDriverOrders'])->name('company.driver_assigned_orders.index');
+    Route::get('/completed-driver-orders', [DriverController::class, 'getCompletedDriverOrders'])->name('company.driver_completed_orders.index');
+    // orders
     Route::get('/orders', [CompanyControllersOrderController::class, 'viewAllOrders'])->name('company.orders.index');
     Route::get('/order-details/{order_id}', [CompanyControllersOrderController::class, 'viewOrderDetails'])->name('company.order_details.show');
     Route::put('/assign-order', [CompanyControllersOrderController::class, 'assignOrderToDriver'])->name('company.order.assign');
+    //
 });
 
 Route::group(['prefix' => 'retail-dealer'], function () {
@@ -76,6 +83,7 @@ Route::group(['prefix' => 'retail-dealer'], function () {
     Route::get('/company-search', [OrderController::class, 'companiesQuerySearch'])->name('retail_dealer.company.search');
     Route::get('/company-products/{company_id}', [OrderController::class, 'companyProducts'])->name('retail_dealer.company_products.index');
     Route::post('/send-order', [OrderController::class, 'makeOrder'])->name('retail_dealer.order.send');
+    Route::get('/my-orders', [OrderController::class, 'viewAllOrders'])->name('retail_dealer.my_orders.index');
     // companies
     Route::get('/unsubscribed-companies', [SubscriptionController::class, 'unsubscribedCompanies'])->name('retail_dealer.unsubscribed_companies.index');
 });

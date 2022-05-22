@@ -87,4 +87,15 @@ class OrderService
 
         return (new static)->successMessage($order, '200');
     }
+
+    public static function viewAllOrders()
+    {
+        $per_page = request()->per_page ?? 10;
+
+        $orders = Order::with('company')
+            ->where('retail_dealer_id', '=', Auth::guard('retail-dealer-api')->user()->id)
+            ->paginate($per_page);
+
+        return (new static)->successMessage($orders, '200');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\CompanyControllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\CompanyModels\CompanyUser;
+use App\Models\CompanyModels\Order;
 use App\Services\CompanyServices\DriverService;
 use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
@@ -36,5 +37,14 @@ class DriverController extends Controller
             return $this->errorMessage(null, '403', 'This action is unauthorized');
         }
         return $this->driverServices->deleteDriver($driver_id);
+    }
+
+    public function getDriverOrders()
+    {
+        return $this->driverServices->getDriverOrders();
+    }
+    public  function getCompletedDriverOrders()
+    {
+        return $this->driverServices->getCompletedDriverOrders();
     }
 }

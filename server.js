@@ -9,6 +9,19 @@ const io = new Server(server, {
 var Redis = require('ioredis');
 var redis = new Redis();
 var users = [];
+// var _request = require('request');
+
+// _request.get(
+//     '/api/company/test', // URL
+//     function(error, httpResponse, body) {
+//         if (err) {
+//             res.json("Error.");
+//         }
+//         console.log("resssssponsee", body);
+//         // 'body' is the response of your API Request
+//     }
+// );
+
 
 redis.subscribe('private-channel', function() {
     // console.log('subscribed to private channel ===');

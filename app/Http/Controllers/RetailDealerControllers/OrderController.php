@@ -61,4 +61,9 @@ class OrderController extends Controller
 
         return $this->orderService->makeOrder($request);
     }
+
+    public function viewAllOrders()
+    {
+        return $this->orderService->viewAllOrders();
+    }
 }
