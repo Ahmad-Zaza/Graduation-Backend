@@ -47,4 +47,9 @@ class DriverController extends Controller
     {
         return $this->driverServices->getCompletedDriverOrders();
     }
+
+    public function driverQuerySearch()
+    {
+        return $this->driverServices->driverQuerySearch();
+    }
 }

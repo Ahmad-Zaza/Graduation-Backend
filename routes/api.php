@@ -10,6 +10,7 @@ use App\Http\Controllers\CompanyControllers\ProductController;
 use App\Http\Controllers\CompanyControllers\SubscriptionController as CompanyControllersSubscriptionController;
 use App\Http\Controllers\CompanyControllers\TruckController;
 use App\Http\Controllers\RetailDealerControllers\AuthController;
+use App\Http\Controllers\RetailDealerControllers\MainController;
 use App\Http\Controllers\RetailDealerControllers\OrderController;
 use App\Http\Controllers\RetailDealerControllers\SubscriptionController;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ Route::group(['prefix' => 'company'], function () {
     Route::post('/new-admin', [MainCompanyController::class, 'addNewAdmin'])->name('company.new-admin');
     Route::post('/new-driver', [MainCompanyController::class, 'addNewDriver'])->name('company.new-driver');
     Route::get('/company-users/{company_id}', [MainCompanyController::class, 'getCompanyUsers'])->name('company.all-users');
+
     // product
     Route::post('/new-product', [ProductController::class, 'addNewProduct'])->name('company.new-product');
     Route::put('/update-product/{product_id}', [ProductController::class, 'updateProduct'])->name('company.update-product');
@@ -59,16 +61,19 @@ Route::group(['prefix' => 'company'], function () {
     Route::put('/update-truck/{truck_id}', [TruckController::class, 'updateTruck'])->name('company.update-truck');
     Route::get('/truck/{truck_id}', [TruckController::class, 'viewTruck'])->name('company.truck.show');
     Route::get('/trucks/{company_id}', [TruckController::class, 'viewAllTrucks'])->name('company.trucks.index');
+    Route::get('/truck-search', [TruckController::class, 'truckQuerySearch'])->name('company.truck.search');
     // subscribes
     Route::get('/subscribes-requests', [CompanyControllersSubscriptionController::class, 'getAllRequests'])->name('company.subscribes_requests.index');
     Route::delete('/update-request/{req_id}', [CompanyControllersSubscriptionController::class, 'editRequest'])->name('company.subscribe_request.edit');
     Route::get('/retail-dealers', [CompanyControllersSubscriptionController::class, 'viewAllRetailDealers'])->name('company.retail_dealers.index');
     // drivers
     Route::get('/drivers', [DriverController::class, 'viewAllDrivers'])->name('company.drivers.index');
+    Route::get('/driver-search', [DriverController::class, 'driverQuerySearch'])->name('company.driver.search');
     Route::delete('/delete-driver/{driver_id}', [DriverController::class, 'deleteDriver'])->name('company.driver.delete');
     // drivers orders
     Route::get('/assigned-driver-orders', [DriverController::class, 'getDriverOrders'])->name('company.driver_assigned_orders.index');
     Route::get('/completed-driver-orders', [DriverController::class, 'getCompletedDriverOrders'])->name('company.driver_completed_orders.index');
+
     // orders
     Route::get('/orders', [CompanyControllersOrderController::class, 'viewAllOrders'])->name('company.orders.index');
     Route::get('/order-details/{order_id}', [CompanyControllersOrderController::class, 'viewOrderDetails'])->name('company.order_details.show');
@@ -81,6 +86,7 @@ Route::group(['prefix' => 'retail-dealer'], function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/sign-up', [AuthController::class, 'signUp']);
     Route::post('/send-subscribe-request', [SubscriptionController::class, 'sendSubscribeRequest'])->name('retaild_dealer.send_subscription_request');
+    Route::get('/main-info', [MainController::class, 'viewMainInfo'])->name('retail_dealer.main-info');
     // orders
     Route::get('/my-companies', [OrderController::class, 'retailDealerCompanies'])->name('retail_dealer.my-companies.index');
     Route::get('/company-search', [OrderController::class, 'companiesQuerySearch'])->name('retail_dealer.company.search');

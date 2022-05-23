@@ -2,7 +2,8 @@
 
 namespace App\Models\CompanyModels;
 
-use App\Models\Company;
+
+use App\Models\CompanyModels\Company;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;

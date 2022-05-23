@@ -7,6 +7,7 @@ use App\Models\CompanyModels\Truck;
 use App\Traits\QueryTrait;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class TruckController extends Controller
@@ -65,6 +66,17 @@ class TruckController extends Controller
         $trucks = Truck::where('company_id', $company_id)
             ->paginate($per_page);
 
+        return $this->successMessage($trucks, '200');
+    }
+
+    public function truckQuerySearch()
+    {
+        $company_id = Auth::guard('company-api')->user()->company_id;
+        $searchText = request()->searchText;
+        $trucks = Truck::where('company_id', $company_id)
+            ->where('truck_number', 'LIKE', '%' . $searchText . '%')
+            ->limit(5)
+            ->get();
         return $this->successMessage($trucks, '200');
     }
 }

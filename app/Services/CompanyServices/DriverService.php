@@ -60,4 +60,22 @@ class DriverService
 
         return (new static)->successMessage($orders, '200');
     }
+
+    public static function driverQuerySearch()
+    {
+        $company_id = Auth::guard('company-api')->user()->company_id;
+        $searchText = request()->searchText;
+        $drivers = CompanyUser::with('company')
+            ->where('company_id', $company_id)
+            ->where('user_type', '=', Config::get('constants.company.users.driver_type'))
+            ->where(function ($query) use ($searchText) {
+                $query->where('first_name', 'LIKE', '%' . $searchText . '%')
+                    ->orWhere('last_name', 'LIKE', '%' . $searchText . '%')
+                    ->orWhere('username', 'LIKE', '%' . $searchText . '%');
+            })
+
+            ->limit(5)
+            ->get();
+        return (new static)->successMessage($drivers, '200');
+    }
 }

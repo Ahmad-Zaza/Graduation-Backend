@@ -45,7 +45,10 @@ class OrderController extends Controller
 
     public function makeOrder(Request $request)
     {
-        // gate
+        // gat
+        if (!Gate::forUser(Auth::guard('retail-dealer-api')->user())->allows('create', [Order::class, $request->company_id])) {
+            return $this->errorMessage(null, '403', 'This action is unauthorized');
+        }
         $validator = Validator::make($request->all(), [
             'retail_dealer_id' => 'required|exists:retail_dealers,id',
             'company_id' => 'required|exists:companies,id',
