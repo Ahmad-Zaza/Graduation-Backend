@@ -76,6 +76,7 @@ Route::group(['prefix' => 'company'], function () {
 
     // orders
     Route::get('/orders', [CompanyControllersOrderController::class, 'viewAllOrders'])->name('company.orders.index');
+    Route::get('/retail-dealer-orders/{retail_dealer_id}', [CompanyControllersOrderController::class, 'viewRetailDealerOrders'])->name('company.retail_dealer_orders.index');
     Route::get('/order-details/{order_id}', [CompanyControllersOrderController::class, 'viewOrderDetails'])->name('company.order_details.show');
     Route::put('/assign-order', [CompanyControllersOrderController::class, 'assignOrderToDriver'])->name('company.order.assign');
     Route::put('/cancel-order', [CompanyControllersOrderController::class, 'cancelOrder'])->name('company.order.cancel');

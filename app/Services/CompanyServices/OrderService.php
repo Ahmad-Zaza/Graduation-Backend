@@ -29,7 +29,7 @@ class OrderService
             $orders = Order::with('retailDealer')
                 ->withCount('orderDetails')
                 ->where('company_id', $company_id)
-                ->where('company_user_id', '=', null)
+                // ->where('company_user_id', '=', null)
                 ->orderby('created_at', 'ASC')
                 ->paginate($per_page);
         }
@@ -64,6 +64,15 @@ class OrderService
         $order->update($request->all());
 
         return (new static)->successMessage($order, '200');
+    }
+
+    public static function viewRetailDealerOrders($retail_dealer_id)
+    {
+        $per_page = request()->per_page ?? 10;
+        $orders = Order::where('company_id', '=', Auth::guard('company-api')->user()->company_id)
+            ->where('retail_dealer_id', '=', $retail_dealer_id)
+            ->paginate($per_page);
+        return (new static)->successMessage($orders, '200');
     }
 }
 // 'company_id',

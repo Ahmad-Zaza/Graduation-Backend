@@ -69,4 +69,9 @@ class OrderController extends Controller
 
         return $this->orderService->cancelOrder($request);
     }
+
+    public function viewRetailDealerOrders($retail_dealer_id)
+    {
+        return $this->orderService->viewRetailDealerOrders($retail_dealer_id);
+    }
 }
