@@ -35,7 +35,7 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class);
     }
 
-    public function driver()
+    public function companyUser()
     {
         return $this->belongsTo(CompanyUser::class);
     }

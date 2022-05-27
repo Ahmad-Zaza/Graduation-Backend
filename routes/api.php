@@ -10,9 +10,11 @@ use App\Http\Controllers\CompanyControllers\ProductController;
 use App\Http\Controllers\CompanyControllers\SubscriptionController as CompanyControllersSubscriptionController;
 use App\Http\Controllers\CompanyControllers\TruckController;
 use App\Http\Controllers\RetailDealerControllers\AuthController;
+use App\Http\Controllers\RetailDealerControllers\CategoryContoller;
 use App\Http\Controllers\RetailDealerControllers\MainController;
 use App\Http\Controllers\RetailDealerControllers\OrderController;
 use App\Http\Controllers\RetailDealerControllers\SubscriptionController;
+use App\Models\CompanyModels\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -78,8 +80,12 @@ Route::group(['prefix' => 'company'], function () {
     Route::get('/orders', [CompanyControllersOrderController::class, 'viewAllOrders'])->name('company.orders.index');
     Route::get('/retail-dealer-orders/{retail_dealer_id}', [CompanyControllersOrderController::class, 'viewRetailDealerOrders'])->name('company.retail_dealer_orders.index');
     Route::get('/order-details/{order_id}', [CompanyControllersOrderController::class, 'viewOrderDetails'])->name('company.order_details.show');
+    // just admin of company
     Route::put('/assign-order', [CompanyControllersOrderController::class, 'assignOrderToDriver'])->name('company.order.assign');
     Route::put('/cancel-order', [CompanyControllersOrderController::class, 'cancelOrder'])->name('company.order.cancel');
+    // just driver
+    Route::put('/go-orders-to-live', [CompanyControllersOrderController::class, 'goTolive'])->name('company.orders.go_live');
+    Route::put('/complete-order', [CompanyControllersOrderController::class, 'completeOrder'])->name('company.order.complete');
     //
 });
 
@@ -92,9 +98,30 @@ Route::group(['prefix' => 'retail-dealer'], function () {
     Route::get('/my-companies', [OrderController::class, 'retailDealerCompanies'])->name('retail_dealer.my-companies.index');
     Route::get('/company-search', [OrderController::class, 'companiesQuerySearch'])->name('retail_dealer.company.search');
     Route::get('/company-products/{company_id}', [OrderController::class, 'companyProducts'])->name('retail_dealer.company_products.index');
+    Route::get('/company-categories/{company_id}', [CategoryContoller::class, 'viewCompanyCategories'])->name('retail_dealer.company_categories.index');
+    Route::get('/category-products/{category_id}', [CategoryContoller::class, 'viewProductsByCategoryId'])->name('retail_dealer.company_category_products.index');
     Route::post('/send-order', [OrderController::class, 'makeOrder'])->name('retail_dealer.order.send');
     Route::get('/my-orders', [OrderController::class, 'viewAllOrders'])->name('retail_dealer.my_orders.index');
+    Route::get('/my-orders/{company_id}', [OrderController::class, 'viewMyOrdersInCompany'])->name('retail_dealer.my_orders_company.index');
     Route::get('/order-details/{order_id}', [OrderController::class, 'viewRetailDealerOrderDetails'])->name('retail_dealer.order_details.show');
     // companies
     Route::get('/unsubscribed-companies', [SubscriptionController::class, 'unsubscribedCompanies'])->name('retail_dealer.unsubscribed_companies.index');
+});
+
+Route::post('add-category', function (Request $request) {
+    header("Access-Control-Allow-Origin: *");
+    header('Access-Control-Allow-Methods: GET, POST, DELETE, PUT, OPTIONS');
+    header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, X-Request-With');
+    header('Access-Control-Allow-Credentials: true');
+
+    $cat = Category::create([
+        'name' => $request->name,
+        'description' => $request->description,
+        'company_id' => 1
+    ]);
+
+    return response()->json([
+        'result' => $cat,
+        200
+    ]);
 });

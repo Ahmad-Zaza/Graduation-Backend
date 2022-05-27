@@ -4,6 +4,8 @@ namespace App\Policies;
 
 use App\Models\CompanyModels\Category;
 use App\Models\CompanyModels\CompanyUser;
+use App\Models\CompanyModels\Subscribe;
+use App\Models\RetailDealersModel\RetailDealer;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -22,7 +24,6 @@ class CategoryPolicy
         return $user->company_id == $company_id;
     }
 
-
     public function view(CompanyUser $user,  $company_id)
     {
         return $user->user_type == 1 && $user->company_id == $company_id;
@@ -39,20 +40,22 @@ class CategoryPolicy
         return $user->user_type == 1 && $user->company_id == $company_id;
     }
 
-
-    public function delete(CompanyUser $user, Category $category)
+    public function viewCategoryForRetailDealer(RetailDealer $retailDealer, $company_id)
     {
-        //
+        $subscribe = Subscribe::where('company_id', $company_id)
+            ->where('retail_dealer_id', $retailDealer->id)
+            ->count();
+
+        return $subscribe > 0;
     }
 
-    public function restore(CompanyUser $user, Category $category)
+    public function viewProductByCategoryForRetailDealer(RetailDealer $retailDealer, $category_id)
     {
-        //
-    }
+        $category = Category::find($category_id)->first();
+        $subscribe = Subscribe::where('company_id', $category->company_id)
+            ->where('retail_dealer_id', $retailDealer->id)
+            ->count();
 
-
-    public function forceDelete(CompanyUser $user, Category $category)
-    {
-        //
+        return $subscribe > 0;
     }
 }

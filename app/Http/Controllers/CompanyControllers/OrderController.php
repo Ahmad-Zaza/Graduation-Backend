@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
@@ -73,5 +74,64 @@ class OrderController extends Controller
     public function viewRetailDealerOrders($retail_dealer_id)
     {
         return $this->orderService->viewRetailDealerOrders($retail_dealer_id);
+    }
+
+    public function goTolive(Request $request)
+    {
+
+        if (!Gate::allows('isDriver', [Order::class])) {
+            return $this->errorMessage(null, '403', 'This action is unauthorized');
+        }
+        $validator = Validator::make($request->all(), [
+            'order_ids' => 'required|array',
+            'order_ids.*.order_id' => [
+                'required',
+                'numeric',
+                Rule::exists(Order::class, 'id')->where(function ($query) {
+                    return $query->where('status', Config::get('constants.company.order.accepted'));
+                })
+            ]
+        ]);
+        if ($validator->fails()) {
+            return $this->errorMessage(null, $validator->errors());
+        }
+
+        foreach ($request->order_ids as $order_id) {
+            $order = Order::where('id', $order_id)->get()[0];
+            // return response($order);
+            $order->update(['status' => Config::get('constants.company.order.delivering')]);
+        }
+
+        return response()->json([
+            'msg' => 'orders status has been updated successfully',
+            'code' => '200'
+        ]);
+    }
+
+    public function completeOrder(Request $request)
+    {
+        if (!Gate::allows('isDriver', [Order::class])) {
+            return $this->errorMessage(null, '403', 'This action is unauthorized');
+        }
+        $validator = Validator::make($request->all(), [
+            'order_id' =>  [
+                'required',
+                'numeric',
+                Rule::exists(Order::class, 'id')->where(function ($query) {
+                    return $query->where('status', Config::get('constants.company.order.delivering'));
+                })
+            ]
+
+        ]);
+        if ($validator->fails()) {
+            return $this->errorMessage(null, '', $validator->errors());
+        }
+
+        $order = Order::find($request->order_id)->first();
+        $order->update(['status' => Config::get('constants.company.order.completed')]);
+        return response()->json([
+            'msg' => 'order has been updated successfully',
+            'code' => '200'
+        ]);
     }
 }

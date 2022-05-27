@@ -106,7 +106,26 @@ class OrderService
             $q->select('order_id', 'product_id', 'count', 'products.name as product_name')
                 ->join('products', 'products.id', '=', 'product_id');
         }])
+            ->with('companyUser')
             ->where('id', $order_id)->get()[0];
         return (new static)->successMessage($order_detail, '200');
+    }
+
+    public static function viewMyOrdersInCompany($company_id)
+    {
+        $per_page = request()->per_page ?? 10;
+        $status = request()->status ?? null;
+        if (is_null($status)) {
+            $myOrders = Order::where('company_id', '=', $company_id)
+                ->where('retail_dealer_id', '=', Auth::guard('retail-dealer-api')->user()->id)
+                ->paginate($per_page);
+        } else {
+            $myOrders = Order::where('company_id', '=', $company_id)
+                ->where('retail_dealer_id', '=', Auth::guard('retail-dealer-api')->user()->id)
+                ->where('status', '=', $status)
+                ->paginate($per_page);
+        }
+
+        return (new static)->successMessage($myOrders, '200');
     }
 }

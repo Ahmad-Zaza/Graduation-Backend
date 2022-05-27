@@ -34,6 +34,11 @@ class OrderPolicy
         }
     }
 
+    public function isDriver(CompanyUser $companyUser)
+    {
+        return $companyUser->user_type == Config::get('constants.company.users.driver_type');
+    }
+
     public function update(CompanyUser $companyUser, Order $order)
     {
     }

@@ -68,12 +68,14 @@ class SubscriptionController extends Controller
         $ret_deal_id = Auth::guard('retail-dealer-api')->user()->id;
         $companies = DB::table('companies')
             ->select(
-                'companies.*'
+                'companies.*',
+                'subscribe_requests.status'
             )
             ->whereNotIn('companies.id', function ($query) use ($ret_deal_id) {
                 $query->select('subscribes.company_id')->from('subscribes')
                     ->where('subscribes.retail_dealer_id', $ret_deal_id);
             })
+            ->leftJoin('subscribe_requests', 'subscribe_requests.company_id', 'companies.id')
             ->paginate($per_page);
 
         return $this->successMessage($companies, '200');

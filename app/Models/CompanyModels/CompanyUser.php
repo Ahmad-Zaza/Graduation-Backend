@@ -33,9 +33,9 @@ class CompanyUser extends Authenticatable implements JWTSubject
         return $this->belongsTo(Company::class);
     }
 
-    public function orders()
+    public function order()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasOne(Order::class);
     }
 
 

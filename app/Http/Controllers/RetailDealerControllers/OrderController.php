@@ -74,4 +74,10 @@ class OrderController extends Controller
     {
         return $this->orderService->viewOrderDetails($order_id);
     }
+
+    public function viewMyOrdersInCompany($company_id)
+    {
+        // get
+        return $this->orderService->viewMyOrdersInCompany($company_id);
+    }
 }
