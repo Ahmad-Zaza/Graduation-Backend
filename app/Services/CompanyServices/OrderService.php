@@ -40,8 +40,16 @@ class OrderService
     public static function viewOrderDetails($order_id)
     {
         $order_detail = Order::with(['orderDetails' => function ($q) {
-            $q->select('order_id', 'product_id', 'count', 'products.name as product_name')
-                ->join('products', 'products.id', '=', 'product_id');
+            $q->select(
+                'order_id',
+                'product_id',
+                'count',
+                'products.name as product_name',
+                'product_types.id as product_type_id',
+                'product_types.name as product_type_name'
+            )
+                ->join('products', 'products.id', '=', 'product_id')
+                ->join('product_types', 'product_types.id', 'products.product_type_id');
         }])
             ->withCount('orderDetails')
             ->with('companyUser')
