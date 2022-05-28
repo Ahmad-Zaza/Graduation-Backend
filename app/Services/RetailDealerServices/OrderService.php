@@ -57,7 +57,12 @@ class OrderService
                 $join->on('product_types.id', '=', 'products.product_type_id')
                     ->where('product_types.company_id', '=', $company_id);
             })
-            ->select('products.*')
+            ->join('categories', 'categories.id', 'products.category_id')
+            ->select(
+                'products.*',
+                'product_types.name as product_type_name',
+                'categories.name as category_name'
+            )
             ->paginate($per_page);
         return (new static)->successMessage($products, '200');
     }
