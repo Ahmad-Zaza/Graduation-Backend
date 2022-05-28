@@ -51,7 +51,7 @@ class CategoryPolicy
 
     public function viewProductByCategoryForRetailDealer(RetailDealer $retailDealer, $category_id)
     {
-        $category = Category::find($category_id)->first();
+        $category = Category::find($category_id);
         $subscribe = Subscribe::where('company_id', $category->company_id)
             ->where('retail_dealer_id', $retailDealer->id)
             ->count();

@@ -109,10 +109,6 @@ Route::group(['prefix' => 'retail-dealer'], function () {
 });
 
 Route::post('add-category', function (Request $request) {
-    header("Access-Control-Allow-Origin: *");
-    header('Access-Control-Allow-Methods: GET, POST, DELETE, PUT, OPTIONS');
-    header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, X-Request-With');
-    header('Access-Control-Allow-Credentials: true');
 
     $cat = Category::create([
         'name' => $request->name,

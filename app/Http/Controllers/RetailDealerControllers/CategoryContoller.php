@@ -5,6 +5,7 @@ namespace App\Http\Controllers\RetailDealerControllers;
 use App\Http\Controllers\Controller;
 use App\Models\CompanyModels\Category;
 use App\Models\CompanyModels\Product;
+use App\Models\CompanyModels\Subscribe;
 use App\Services\RetailDealerServices\CategoryService;
 use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
@@ -32,7 +33,6 @@ class CategoryContoller extends Controller
 
     public function viewProductsByCategoryId($category_id)
     {
-
         if (!Gate::forUser(Auth::guard('retail-dealer-api')->user())->allows('viewProductByCategoryForRetailDealer', [Category::class, $category_id])) {
             return $this->errorMessage(null, '403', 'This action is unauthorized');
         }
