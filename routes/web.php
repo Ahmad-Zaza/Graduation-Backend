@@ -1,6 +1,8 @@
 <?php
 
+use App\Events\LiveOrderEvent;
 use App\Events\TestEvent;
+use App\Models\CompanyModels\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -16,8 +18,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-
+    $data = new Order();
+    $data->id  = 1;
     event(new TestEvent(null));
+    event(new LiveOrderEvent($data));
     $user = Auth::guard('company-api')->check();
     // Debugbar::info("debugerrr", [$user]);
     return view('welcome', ['user' => $user]);
