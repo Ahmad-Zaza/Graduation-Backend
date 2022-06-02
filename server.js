@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
 
     socket.on('join_room', (channelName, user_ids) => {
         console.log("111111111111111111111111", user_ids, socket.id);
-        if (users[user_id1] == socket.id) { // here we should make the auth
+        if (users[user_ids] == socket.id) { // here we should make the auth
             socket.join(channelName);
             // console.log("room that first user in is ===> ", socket.rooms);
         }
