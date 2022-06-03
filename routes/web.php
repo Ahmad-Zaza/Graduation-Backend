@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     $data = new Order();
     $data->id  = 1;
-    event(new TestEvent(null));
-    event(new LiveOrderEvent($data));
+    event(new LiveOrderEvent(null));
+    // event(new TestEvent(null));
     $user = Auth::guard('company-api')->check();
     // Debugbar::info("debugerrr", [$user]);
     return view('welcome', ['user' => $user]);

@@ -41,6 +41,7 @@ class DriverService
         $per_page = request()->per_page ?? 10;
         $driver_id = Auth::guard('company-api')->user()->id;
         $orders = Order::with('retailDealer')
+            ->with('companyUser')
             ->withCount('orderDetails')
             ->where('company_user_id', '=', $driver_id)
             ->where('status', '=', Config::get('constants.company.order.accepted'))
@@ -55,6 +56,7 @@ class DriverService
         $per_page = request()->per_page ?? 10;
         $driver_id = Auth::guard('company-api')->user()->id;
         $orders = Order::with('retailDealer')
+            ->with('companyUser')
             ->withCount('orderDetails')
             ->where('company_user_id', '=', $driver_id)
             ->where('status', '=', Config::get('constants.company.order.completed'))

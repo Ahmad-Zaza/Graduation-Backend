@@ -25,7 +25,9 @@ class CompanyUser extends Authenticatable implements JWTSubject
         'password',
         'phone_number',
         'user_type',
-        'photo_id'
+        'photo_id',
+        'firebasetoken',
+        'truck_id'
     ];
 
     public function company()
@@ -38,6 +40,10 @@ class CompanyUser extends Authenticatable implements JWTSubject
         return $this->hasOne(Order::class);
     }
 
+    public function truck()
+    {
+        return $this->hasOne(Truck::class);
+    }
 
     public function setPasswordAttribute($password)
     {

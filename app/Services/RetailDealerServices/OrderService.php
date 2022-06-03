@@ -98,6 +98,7 @@ class OrderService
         $per_page = request()->per_page ?? 10;
 
         $orders = Order::with('company')
+            ->with('companyUser')
             ->withCount('orderDetails')
             ->where('retail_dealer_id', '=', Auth::guard('retail-dealer-api')->user()->id)
             ->paginate($per_page);
@@ -121,11 +122,15 @@ class OrderService
         $per_page = request()->per_page ?? 10;
         $status = request()->status ?? null;
         if (is_null($status)) {
-            $myOrders = Order::where('company_id', '=', $company_id)
+            $myOrders = Order::with('companyUser')
+                ->with('companyUser')
+                ->where('company_id', '=', $company_id)
                 ->where('retail_dealer_id', '=', Auth::guard('retail-dealer-api')->user()->id)
                 ->paginate($per_page);
         } else {
-            $myOrders = Order::where('company_id', '=', $company_id)
+            $myOrders = Order::with('companyUser')
+                ->with('companyUser')
+                ->where('company_id', '=', $company_id)
                 ->where('retail_dealer_id', '=', Auth::guard('retail-dealer-api')->user()->id)
                 ->where('status', '=', $status)
                 ->paginate($per_page);

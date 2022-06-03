@@ -24,7 +24,8 @@ class RetailDealer extends Authenticatable implements JWTSubject
         'photo_id',
         'account_status',
         'longitude',
-        'latitude'
+        'latitude',
+        'firebasetoken'
     ];
 
     public function setPasswordAttribute($password)

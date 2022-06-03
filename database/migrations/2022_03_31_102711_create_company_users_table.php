@@ -25,6 +25,8 @@ class CreateCompanyUsersTable extends Migration
             $table->boolean('account_status')->default(false);
             $table->integer('user_type')->default(0);
             $table->string('photo_id')->nullable();
+            $table->string('firebasetoken')->nullable();
+            $table->integer('truck_id')->nullable();
             $table->timestamps();
         });
     }

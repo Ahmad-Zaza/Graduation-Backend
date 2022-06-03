@@ -26,6 +26,7 @@ class CreateRetailDealersTable extends Migration
             $table->string('photo_id')->nullable();
             $table->double('longitude');
             $table->double('latitude');
+            $table->string('firebasetoken')->nullable();
             $table->timestamps();
         });
     }

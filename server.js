@@ -31,15 +31,16 @@ redis.subscribe('private-channel', function() {
 // console.log("redis=====", redis.on('ff', function(channel, ff) {}))
 redis.on('message', function(channel, ff) {
     ff = JSON.parse(ff);
-    // console.log("zaza channel", channel);
-    // console.log("zaza msg", ff);
+    console.log("zaza channel", channel);
+    console.log("zaza msg", ff);
     if (channel == 'private-channel') {
+        console.log("inPrivateChannel", channel);
         ff.data.data = "hellow my friend";
         let data = ff.data.data;
         let receiver_id = 1;
         let event = ff.event;
         // console.log("zaza event", data, event);
-        // io.to(`${users[receiver_id]}`).emit(channel + ':' + ff.event, data);
+        io.to(`${users[receiver_id]}`).emit(channel + ':' + ff.event, data);
         io.to("private-channel").emit(channel + ':' + ff.event, data); // listen to room
         // console.log("io====", io);
     }
@@ -54,6 +55,7 @@ io.on('connection', (socket) => {
         console.log("user_connected1", user_id, users[user_id]);
 
     });
+
 
     socket.on('join_room', (channelName, user_ids) => {
         console.log("111111111111111111111111", user_ids, socket.id);

@@ -91,7 +91,13 @@
             socket.on('connect', function() {
                 socket.emit('user_connected', 1);
                 var arr = [1, 2, 3, 4, 5];
+                //socket.emit('join_room', "private-channel", 1);
+            });
+
+            socket.on("private-channel:App\\Events\\TestEvent", function(ff) {
+                console.log("listented to privateeeeee", ff);
                 socket.emit('join_room', "private-channel", 1);
+                alert(ff);
             });
 
             socket.on('sendChatToClient', (message) => {
@@ -99,19 +105,13 @@
                 $('.chat-content ul').append(`<li>${message}</li>`);
             });
 
-            socket.on("private-channel:App\\Events\\TestEvent", function(ff) {
-                console.log("listented to privateeeeee", ff);
-                alert(ff);
-            });
+
 
             //socket.on("order.1:App\\Events\\LiveOrderEvent",
             //    function(order) {
             //        console.log("listened to order private channel");
             //    });
 
-            console.log("onddddd", socket.on);
-
-            console.log("socket", socket)
         });
     </script>
 </body>

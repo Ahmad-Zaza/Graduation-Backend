@@ -56,6 +56,7 @@ class MainCompanyController extends Controller
             'username' => 'required|string|unique:company_users,username',
             "user_type" => 'required|numeric',
             "password" => 'required|confirmed',
+            'truck_id' => 'required|exists:trucks,id'
         ]);
         if ($validator->fails()) {
             return $this->errorMessage(null, '', $validator->errors());
@@ -71,5 +72,15 @@ class MainCompanyController extends Controller
         $info1 = Truck::where('company_id', $company_id)->count();
         $info2 = Subscribe::where('company_id', $company_id)->count();
         return $this->successMessage(['orders_count' => $info, 'trucks_count' => $info1, 'subscribes_count' => $info2], '200');
+    }
+
+    public function setFirebaseToken(Request $request, $compUserId)
+    {
+        $user = CompanyUser::find($compUserId);
+        $user->firebasetoken = $request->firebasetoken;
+        $user->save();
+        return response()->json([
+            'msg' => 'firebasetoken updated successfully'
+        ]);
     }
 }

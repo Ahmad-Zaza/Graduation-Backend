@@ -28,9 +28,7 @@ Route::group(['prefix' => 'company'], function () {
     Route::post('/login', [CompanyControllersAuthController::class, 'login']);
     Route::post('/sign-up', [CompanyControllersAuthController::class, 'signUp']);
     Route::post('/guard', [CompanyControllersAuthController::class, 'guard']);
-    Route::get('/test', function () {
-        return ['test', 'is', 'done', 'successfully'];
-    });
+    Route::put('/set-firebasetoken/{user_id}', [MainCompanyController::class, 'setFirebaseToken'])->name('company.user.set_firebasetoken');
     // admin info
     Route::get('/admin-basic-info', [MainCompanyController::class, 'getBasicInfo'])->name('company.basic_info.show');
     // category
@@ -106,6 +104,9 @@ Route::group(['prefix' => 'retail-dealer'], function () {
     Route::get('/order-details/{order_id}', [OrderController::class, 'viewRetailDealerOrderDetails'])->name('retail_dealer.order_details.show');
     // companies
     Route::get('/unsubscribed-companies', [SubscriptionController::class, 'unsubscribedCompanies'])->name('retail_dealer.unsubscribed_companies.index');
+
+    //
+    Route::put('/set-firebasetoken/{user_id}', [MainController::class, 'setFirebaseToken'])->name('retail_dealer.user.set_firebasetoken');
 });
 
 Route::post('add-category', function (Request $request) {
