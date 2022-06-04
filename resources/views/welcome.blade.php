@@ -74,9 +74,12 @@
 
     <script>
         $(function() {
+            // connect socket
             let ip_address = 'localhost';
             let socket_port = '3000';
             let socket = io(ip_address + ':' + socket_port);
+
+            /////
             let chatInput = $('#chatInput');
             chatInput.keypress(function(e) {
                 let message = $(this).html();
@@ -94,10 +97,21 @@
                 //socket.emit('join_room', "private-channel", 1);
             });
 
-            socket.on("private-channel:App\\Events\\TestEvent", function(ff) {
+            /*socket.on("private-channel:App\\Events\\TestEvent", function(ff) {
                 console.log("listented to privateeeeee", ff);
-                socket.emit('join_room', "private-channel", 1);
+
                 alert(ff);
+            });*/
+            setInterval(function() {
+                console.log("we work in time");
+                socket.emit('join_room', "order", 1);
+            }, 2000);
+
+
+
+            socket.on("position", function(position) {
+                console.log("listented to privateeeeee room", position);
+                //alert('long => ' + position.long + '  lat => ' + position.lat);
             });
 
             socket.on('sendChatToClient', (message) => {

@@ -9,26 +9,12 @@ const io = new Server(server, {
 var Redis = require('ioredis');
 var redis = new Redis();
 var users = [];
-// var _request = require('request');
-
-// _request.get(
-//     '/api/company/test', // URL
-//     function(error, httpResponse, body) {
-//         if (err) {
-//             res.json("Error.");
-//         }
-//         console.log("resssssponsee", body);
-//         // 'body' is the response of your API Request
-//     }
-// );
 
 
 redis.subscribe('private-channel', function() {
     // console.log('subscribed to private channel ===');
-
 });
 
-// console.log("redis=====", redis.on('ff', function(channel, ff) {}))
 redis.on('message', function(channel, ff) {
     ff = JSON.parse(ff);
     console.log("zaza channel", channel);
@@ -39,29 +25,30 @@ redis.on('message', function(channel, ff) {
         let data = ff.data.data;
         let receiver_id = 1;
         let event = ff.event;
-        // console.log("zaza event", data, event);
         io.to(`${users[receiver_id]}`).emit(channel + ':' + ff.event, data);
         io.to("private-channel").emit(channel + ':' + ff.event, data); // listen to room
-        // console.log("io====", io);
     }
 });
 
 
 io.on('connection', (socket) => {
-    // console.log('connection11');
-    // console.log("redis", redis);
+    // on connection
     socket.on('user_connected', (user_id) => {
         users[user_id] = socket.id;
         console.log("user_connected1", user_id, users[user_id]);
-
     });
+    // on join room
+    socket.on('join_room', (channelName, user_id) => {
+        console.log("111111111111111111111111", user_id, socket.id);
+        if (users[user_id] == socket.id) { // here we should make the auth
+            socket.join(channelName + '1');
+            let data = {
+                "long": randomInRange(1, 200),
+                "lat": randomInRange(1, 200)
+            };
 
-
-    socket.on('join_room', (channelName, user_ids) => {
-        console.log("111111111111111111111111", user_ids, socket.id);
-        if (users[user_ids] == socket.id) { // here we should make the auth
-            socket.join(channelName);
-            // console.log("room that first user in is ===> ", socket.rooms);
+            io.to(channelName + '1').emit("position", data);
+            console.log("room that first user in is ===> ", socket.rooms);
         }
     });
 
@@ -72,7 +59,6 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('sendChatToClient', message);
     });
 
-
     socket.on('disconnect', (socket) => {
         console.log('Disconnect');
     });
@@ -81,3 +67,8 @@ io.on('connection', (socket) => {
 server.listen(3000, () => {
     console.log("server is running111");
 });
+
+
+function randomInRange(min, max) {
+    return Math.random() < 0.5 ? ((1 - Math.random()) * (max - min) + min) : (Math.random() * (max - min) + min);
+}
