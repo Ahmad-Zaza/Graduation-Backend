@@ -71,6 +71,8 @@ class SubscriptionService
                 'retail_dealers.phone_number',
                 'retail_dealers.email',
                 'retail_dealers.account_status',
+                'retail_dealers.longitude',
+                'retail_dealers.latitude',
                 'retail_dealers.created_at',
                 'retail_dealers.updated_at'
             )
@@ -82,6 +84,8 @@ class SubscriptionService
                 'retail_dealers.phone_number',
                 'retail_dealers.email',
                 'retail_dealers.account_status',
+                'retail_dealers.longitude',
+                'retail_dealers.latitude',
                 'retail_dealers.created_at',
                 'retail_dealers.updated_at'
             )
