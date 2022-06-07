@@ -1,10 +1,14 @@
 const express = require('express');
 const app = express();
 const http = require('http');
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server, {
-    cors: "*"
+const server = app.listen(3000, () => {
+    console.log("Server is started!", 3000);
+});
+
+const io = require("socket.io")(server, {
+    cors: {
+        origin: "*"
+    }
 });
 var Redis = require('ioredis');
 var redis = new Redis();
@@ -64,9 +68,7 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(3000, () => {
-    console.log("server is running111");
-});
+
 
 
 function randomInRange(min, max) {
