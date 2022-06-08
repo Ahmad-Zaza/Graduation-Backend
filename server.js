@@ -42,16 +42,20 @@ io.on('connection', (socket) => {
         console.log("user_connected1", user_id, users[user_id]);
     });
     // on join room
-    socket.on('join_room', (channelName, user_id) => {
-        console.log("111111111111111111111111", user_id, socket.id);
-        if (users[user_id] == socket.id) { // here we should make the auth
-            socket.join(channelName + '1');
-            let data = {
+    socket.on('join_room', (data) => {
+        console.log("111111111111111111111111", data, `${data.channelName}${data.data.order_id}`);
+        // socket.join(data.channelName);
+
+        console.log("rooooooooooooom", socket.rooms);
+        if (users[data.data.user_id] == socket.id) { // here we should make the auth
+            // socket.join(channelName + '1');
+            socket.join(`${data.channelName}${data.data.order_id}`);
+            let data1 = {
                 "long": randomInRange(1, 200),
                 "lat": randomInRange(1, 200)
             };
 
-            io.to(channelName + '1').emit("position", data);
+            io.to(`${data.channelName}${data.data.order_id}`).emit("position" + `${data.data.order_id}`, data1);
             console.log("room that first user in is ===> ", socket.rooms);
         }
     });

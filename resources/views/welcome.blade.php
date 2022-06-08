@@ -104,12 +104,20 @@
             });*/
             setInterval(function() {
                 console.log("we work in time");
-                socket.emit('join_room', "order", 1);
+                //socket.emit('join_room', "order", 1);
+                var data = {
+                    "channelName": "order",
+                    "data": {
+                        "order_id": 1,
+                        "user_id": 1
+                    }
+                };
+                socket.emit('join_room', data);
             }, 2000);
 
 
 
-            socket.on("position", function(position) {
+            socket.on("position1", function(position) {
                 console.log("listented to privateeeeee room", position);
                 //alert('long => ' + position.long + '  lat => ' + position.lat);
             });
