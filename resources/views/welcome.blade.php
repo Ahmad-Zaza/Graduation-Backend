@@ -106,10 +106,14 @@
                 console.log("we work in time");
                 //socket.emit('join_room', "order", 1);
                 var data = {
-                    "channelName": "order",
+                    "roomName": "order",
+                    //"roomName": "add_order_room",
                     "data": {
                         "order_id": 1,
-                        "user_id": 1
+                        "user_id": 1,
+                        "long": 3.3434,
+                        "lat": 3.4343,
+                        "status": 3
                     }
                 };
                 socket.emit('join_room', data);
@@ -119,6 +123,11 @@
 
             socket.on("position1", function(position) {
                 console.log("listented to privateeeeee room", position);
+                //alert('long => ' + position.long + '  lat => ' + position.lat);
+            });
+
+            socket.on("listen_to_add_order_room", function(data) {
+                console.log("listented to privateeeeee room", data);
                 //alert('long => ' + position.long + '  lat => ' + position.lat);
             });
 

@@ -43,21 +43,28 @@ io.on('connection', (socket) => {
     });
     // on join room
     socket.on('join_room', (data) => {
-        console.log("111111111111111111111111", data, `${data.channelName}${data.data.order_id}`);
+        console.log("111111111111111111111111", data, `${data.roomName}${data.data.order_id}`);
         // socket.join(data.channelName);
 
         console.log("rooooooooooooom", socket.rooms);
         if (users[data.data.user_id] == socket.id) { // here we should make the auth
             // socket.join(channelName + '1');
-            socket.join(`${data.channelName}${data.data.order_id}`);
-            let data1 = {
-                "long": randomInRange(1, 200),
-                "lat": randomInRange(1, 200)
-            };
+            if (data.roomName == 'add_order_room') {
+                socket.join(data.roomName);
+                io.to(data.roomName).emit("listen_to_add_order_room", data);
+            } else {
+                socket.join(`${data.roomName}${data.data.order_id}`);
+                let data1 = {
+                    "long": data.data.long,
+                    "lat": data.data.lat
+                };
 
-            io.to(`${data.channelName}${data.data.order_id}`).emit("position" + `${data.data.order_id}`, data1);
-            console.log("room that first user in is ===> ", socket.rooms);
+                io.to(`${data.roomName}${data.data.order_id}`).emit("position" + `${data.data.order_id}`, data1);
+            }
+
         }
+        console.log("room that first user in is ===> ", socket.rooms);
+
     });
 
     socket.on('sendChatToServer', (message) => {
