@@ -39,7 +39,7 @@ io.on('connection', (socket) => {
     // on connection
     socket.on('user_connected', (user_id) => {
         users[user_id] = socket.id;
-        console.log("user_connected1", user_id, users[user_id]);
+        console.log("user_connected", user_id, users[user_id]);
     });
     // on join room
     socket.on('join_room', (data) => {
@@ -47,9 +47,11 @@ io.on('connection', (socket) => {
         // socket.join(data.channelName);
 
         console.log("rooooooooooooom", socket.rooms);
-        if (users[data.data.user_id] == socket.id) { // here we should make the auth
+        // if (users[data.data.user_id] == socket.id) { // here we should make the auth
             // socket.join(channelName + '1');
+            console.log("room name = ", data.roomName);
             if (data.roomName == 'add_order_room') {
+                console.log("add_order_room==========", data);
                 socket.join(data.roomName);
                 io.to(data.roomName).emit("listen_to_add_order_room", data);
             } else {
@@ -62,7 +64,7 @@ io.on('connection', (socket) => {
                 io.to(`${data.roomName}${data.data.order_id}`).emit("position" + `${data.data.order_id}`, data1);
             }
 
-        }
+        // }
         console.log("room that first user in is ===> ", socket.rooms);
 
     });

@@ -30,7 +30,7 @@ class OrderController extends Controller
         return $this->orderService->retailDealerCompanies();
     }
 
-    public function zcompaniesQuerySearch()
+    public function companiesQuerySearch()
     {
         return $this->orderService->companiesQuerySearch();
     }

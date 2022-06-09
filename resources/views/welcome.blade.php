@@ -106,10 +106,10 @@
                 console.log("we work in time");
                 //socket.emit('join_room', "order", 1);
                 var data = {
-                    "roomName": "order",
-                    //"roomName": "add_order_room",
+                    // "roomName": "order",
+                    "roomName": "add_order_room",
                     "data": {
-                        "order_id": 1,
+                        "order_id": -1,
                         "user_id": 1,
                         "long": 3.3434,
                         "lat": 3.4343,
