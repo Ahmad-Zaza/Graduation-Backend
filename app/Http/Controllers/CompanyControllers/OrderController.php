@@ -88,7 +88,10 @@ class OrderController extends Controller
                 'required',
                 'numeric',
                 Rule::exists(Order::class, 'id')->where(function ($query) {
-                    return $query->where('status', Config::get('constants.company.order.accepted'));
+                    return $query->where('status', Config::get('constants.company.order.accepted'))
+                    ->orWhere(
+                        'status', Config::get('constants.company.order.delivering'));
+
                 })
             ]
         ]);
