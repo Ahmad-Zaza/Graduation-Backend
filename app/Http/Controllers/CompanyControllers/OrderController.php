@@ -91,9 +91,10 @@ class OrderController extends Controller
                 'numeric',
                 Rule::exists(Order::class, 'id')->where(function ($query) {
                     return $query->where('status', Config::get('constants.company.order.accepted'))
-                    ->orWhere(
-                        'status', Config::get('constants.company.order.delivering'));
-
+                        ->orWhere(
+                            'status',
+                            Config::get('constants.company.order.delivering')
+                        );
                 })
             ]
         ]);
@@ -113,8 +114,8 @@ class OrderController extends Controller
         $type = "order-live-admin";
         $company_id = Auth::guard('company-api')->user()->company_id;
         $admins = CompanyUser::where('company_id', $company_id)
-        ->where('user_type', Config::get('constants.company.users.admin_type'))->get();
-        foreach($admins as $admin){
+            ->where('user_type', Config::get('constants.company.users.admin_type'))->get();
+        foreach ($admins as $admin) {
             // $this->sendNotification($admin->firebasetoken, $title, $body,  $type, $admin->id); //send notification
             $data = [
                 "registration_ids" => [$admin->firebasetoken],
@@ -186,6 +187,47 @@ class OrderController extends Controller
 
         $order = Order::find($request->order_id)->first();
         $order->update(['status' => Config::get('constants.company.order.completed')]);
+        // send notficatinos
+        $driver = Auth::guard('company-api')->user();
+        $title = "Order completed!";
+        $body = "" . $driver->first_name  . " " . $driver->last_name . " completed the order, see that!";
+        $type = "order-completed-admin";
+
+        $admins = CompanyUser::where('company_id', $driver->company_id)
+            ->where('user_type', Config::get('constants.company.users.admin_type'))->get();
+        foreach ($admins as $admin) {
+            //    (new static)->sendNotification($admin->firebasetoken, $title, $body,  $type, $admin->id); //send notification
+            $data = [
+                "registration_ids" => [$admin->firebasetoken],
+                "notification" => [
+                    "body"  => $body,
+                    "title" => $title,
+                ],
+                "data" => [
+                    "type" => $type,
+                    "id" => $request->retail_dealer_id
+                ],
+            ];
+
+            $ch = curl_init();
+
+            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt($ch, CURLOPT_POST, 1);
+
+            $headers = array();
+            $headers[] = 'Content-Type: application/json';
+            $headers[] = 'Authorization: key=AAAAxbkUDBc:APA91bHL9Z4tWphs2HKNWJ4D9EUcinadhgW2BHCVfrkDPtkhOXMM8Z1QzyZSjuJzh8TiAsChM0rTIAa2ri35SJwjESmZO5A-Oi3a8TssSpNWNhVPzFJg9kVzYgw7jNn7RPRP8G6rkuUd';
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            $notification = new notifications();
+            $notification->user_id = $admin->id;
+            $notification->title = $title;
+            $notification->body = $body;
+            $notification->type = "Driver";
+            $notification->save();
+        }
+        ///////////////////
         return response()->json([
             'msg' => 'order has been updated successfully',
             'code' => '200'
