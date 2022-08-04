@@ -70,7 +70,7 @@ class OrderService
         return (new static)->successMessage($products, '200');
     }
 
-    public static function makeOrder(Request $request)
+    public function makeOrder(Request $request)
     {
         $order = Order::create([
             'retail_dealer_id' => $request->retail_dealer_id,
@@ -92,7 +92,49 @@ class OrderService
         foreach ($order->details as $order_detail) {
             $order_detail['product'] = Product::find($order_detail->product_id);
         }
-        (new static)->sendNotificationToAdmin($request->retail_dealer_id, $request->company_id);
+        // self::sendNotificationToAdmin($request->retail_dealer_id, $request->company_id, $order->id);
+        $retail_dealer = RetailDealer::find($request->retail_dealer_id);
+        $title = "New order!";
+        $body = "You have a new order from " . $retail_dealer->first_name . " " . $retail_dealer->last_name . "";
+        $type = "order";
+        $admins = CompanyUser::where('company_id', $request->company_id)
+            ->where('user_type', Config::get('constants.company.users.admin_type'))->get();
+        foreach ($admins as $admin) {
+            // $this->sendNotification($admin->firebasetoken, $title, $body,  $type, $order->id); //send notification
+            $data = [
+                "registration_ids" => [$admin->firebasetoken],
+                "notification" => [
+                    "body"  => $body,
+                    "title" => $title,
+                ],
+                "data" => [
+                    "type" => $type,
+                    "id" => $order->id
+                ],
+            ];
+
+            $ch = curl_init();
+
+            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt($ch, CURLOPT_POST, 1);
+
+            $headers = array();
+            $headers[] = 'Content-Type: application/json';
+            $headers[] = 'Authorization: key=AAAAxbkUDBc:APA91bHL9Z4tWphs2HKNWJ4D9EUcinadhgW2BHCVfrkDPtkhOXMM8Z1QzyZSjuJzh8TiAsChM0rTIAa2ri35SJwjESmZO5A-Oi3a8TssSpNWNhVPzFJg9kVzYgw7jNn7RPRP8G6rkuUd';
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            $result = curl_exec($ch);
+            $notification = new notifications();
+            $notification->user_id = $admin->id;
+            $notification->title = $title;
+            $notification->body = $body;
+            $notification->type = "Dealer";
+            $notification->save();
+            // return response()->json("we are here and we send and saved notifications");
+        }
+
         return (new static)->successMessage($order, '200');
     }
 
@@ -142,23 +184,42 @@ class OrderService
         return (new static)->successMessage($myOrders, '200');
     }
 
-    public function sendNotificationToAdmin($retail_dealer_id, $company_id)
+    public function sendNotificationToAdmin($retail_dealer_id, $company_id, $order_id)
     {
-        $retail_dealer = RetailDealer::find($retail_dealer_id);
-        $title = "New order!";
-        $body = "You have a new order from " . $retail_dealer->first_name . " " . $retail_dealer->last_name . "";
-        $type = "order";
-        $admins = CompanyUser::where('company_id', $company_id)
-        ->where('user_type', Config::get('constants.company.users.admin_type'))->get();
+        return response()->json("we are here");
 
-        foreach ($admins as $admin) {
-            (new static)->sendNotification($admin->firebasetoken, $title, $body,  $type, $admin->id); //send notification
-            $notification = new notifications();
-            $notification->user_id = $admin->id;
-            $notification->title = $title;
-            $notification->body = $body;
-            $notification->type = "Dealer";
-            $notification->save();
-        }
+    }
+
+    public function sendNotification($token, $title, $body,  $type, $id)
+    {
+        // return response(request()->token);
+        $data = [
+            "registration_ids" => [$token],
+            "notification" => [
+                "body"  => $body,
+                "title" => $title,
+            ],
+            "data" => [
+                "type" => $type,
+                "id" => $id
+            ],
+        ];
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Authorization: key=AAAAxbkUDBc:APA91bHL9Z4tWphs2HKNWJ4D9EUcinadhgW2BHCVfrkDPtkhOXMM8Z1QzyZSjuJzh8TiAsChM0rTIAa2ri35SJwjESmZO5A-Oi3a8TssSpNWNhVPzFJg9kVzYgw7jNn7RPRP8G6rkuUd';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+
+        // return true;
+        return response($data);
     }
 }
