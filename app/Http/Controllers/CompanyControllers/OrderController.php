@@ -115,7 +115,40 @@ class OrderController extends Controller
         $admins = CompanyUser::where('company_id', $company_id)
         ->where('user_type', Config::get('constants.company.users.admin_type'))->get();
         foreach($admins as $admin){
-            $this->sendNotification($admin->firebasetoken, $title, $body,  $type, $admin->id); //send notification
+            // $this->sendNotification($admin->firebasetoken, $title, $body,  $type, $admin->id); //send notification
+            $data = [
+                "registration_ids" => [$admin->firebasetoken],
+                "notification" => [
+                    "body"  => $body,
+                    "title" => $title,
+                ],
+                "data" => [
+                    "type" => $type,
+                    "id" => $order->id
+                ],
+            ];
+
+            $ch = curl_init();
+
+            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt($ch, CURLOPT_POST, 1);
+
+            $headers = array();
+            $headers[] = 'Content-Type: application/json';
+            $headers[] = 'Authorization: key=AAAAxbkUDBc:APA91bHL9Z4tWphs2HKNWJ4D9EUcinadhgW2BHCVfrkDPtkhOXMM8Z1QzyZSjuJzh8TiAsChM0rTIAa2ri35SJwjESmZO5A-Oi3a8TssSpNWNhVPzFJg9kVzYgw7jNn7RPRP8G6rkuUd';
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            $result = curl_exec($ch);
+            $notification = new notifications();
+            $notification->user_id = $admin->id;
+            $notification->title = $title;
+            $notification->body = $body;
+            $notification->type = "Dealer";
+            $notification->save();
+
+            ///////////
             $notification = new notifications();
             $notification->user_id = $admin->id;
             $notification->title = $title;
