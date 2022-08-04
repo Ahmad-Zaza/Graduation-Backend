@@ -44,60 +44,36 @@ trait QueryTrait
             'result' => $data,
         ], 200);
     }
-
-    public function notification()
+    public function sendNotification($token)
     {
-        //$admin1 = Doctor::find($id);
-        $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
-        //$admin = Auth()->guard('admin-api')->user();
-        $token = request()->bearerToken();
-
-        // if($admin1 != $admin){
-        //     return response()->json([
-        //         'result' => null,
-        //         'msg' => 'UnAuthenticate User!!'
-        //     ]);
-        // }
-
-        if (!Auth::guard('patient-api')->check()) {
-            return response()->json([
-                'result' => null,
-                'msg' => 'you are not authentication',
-            ]);
-        }
-
-
-        $notification = [
-            'title' => 'notification title',
-            'sound' => true,
+        // return response(request()->token);
+        $data = [
+            "registration_ids" => [$token],
+            "notification" => [
+                "body"  => 'this is test body',
+                "title" => 'title test',
+            ],
+            "data" => [
+                "type" => "type-test",
+                "id" => "this is test id"
+            ],
         ];
-
-        $extraNotificationData = ["message" => $notification, "moredata" => 'dd'];
-
-        $fcmNotification = [
-            //'registration_ids' => $tokenList, //multple token array
-            'to'        => $token, //single token
-            'notification' => $notification,
-            'data' => $extraNotificationData
-        ];
-
-        $headers = [
-            'Authorization: key=Legacy server key',
-            'Content-Type: application/json'
-        ];
-
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $fcmUrl);
-        curl_setopt($ch, CURLOPT_POST, true);
+
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Authorization: key=AAAAxbkUDBc:APA91bHL9Z4tWphs2HKNWJ4D9EUcinadhgW2BHCVfrkDPtkhOXMM8Z1QzyZSjuJzh8TiAsChM0rTIAa2ri35SJwjESmZO5A-Oi3a8TssSpNWNhVPzFJg9kVzYgw7jNn7RPRP8G6rkuUd';
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fcmNotification));
+
         $result = curl_exec($ch);
-        curl_close($ch);
 
         // return true;
-        return response($notification);
+        return response($data);
     }
 }

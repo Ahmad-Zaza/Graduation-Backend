@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\CompanyControllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompanyModels\CompanyUser;
 use App\Models\CompanyModels\Order;
+use App\Models\notifications;
 use App\Services\CompanyServices\OrderService;
 use App\Traits\QueryTrait;
 use Illuminate\Validation\Rule;
@@ -104,6 +106,25 @@ class OrderController extends Controller
             // return response($order);
             $order->update(['status' => Config::get('constants.company.order.delivering')]);
         }
+
+        /////////////////////////////// send notifications
+        $title = "You have new driver on live!";
+        $body = "See that!";
+        $type = "order-live-admin";
+        $company_id = Auth::guard('company-api')->user()->company_id;
+        $admins = CompanyUser::where('company_id', $company_id)
+        ->where('user_type', Config::get('constants.company.users.admin_type'))->get();
+        foreach($admins as $admin){
+            $this->sendNotification($admin->firebasetoken, $title, $body,  $type, $admin->id); //send notification
+            $notification = new notifications();
+            $notification->user_id = $admin->id;
+            $notification->title = $title;
+            $notification->body = $body;
+            $notification->type = "Driver";
+            $notification->save();
+        }
+        ////////////////////////////////////////////
+
 
         return response()->json([
             'msg' => 'orders status has been updated successfully',

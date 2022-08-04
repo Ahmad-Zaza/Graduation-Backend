@@ -3,13 +3,16 @@
 namespace App\Services\RetailDealerServices;
 
 use App\Models\CompanyModels\Company;
+use App\Models\CompanyModels\CompanyUser;
 use App\Models\CompanyModels\Order;
 use App\Models\CompanyModels\OrderDetail;
 use App\Models\CompanyModels\Product;
+use App\Models\notifications;
 use App\Models\RetailDealersModel\RetailDealer;
 use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -89,7 +92,7 @@ class OrderService
         foreach ($order->details as $order_detail) {
             $order_detail['product'] = Product::find($order_detail->product_id);
         }
-
+        (new static)->sendNotificationToAdmin($request->retail_dealer_id, $request->company_id);
         return (new static)->successMessage($order, '200');
     }
 
@@ -137,5 +140,25 @@ class OrderService
         }
 
         return (new static)->successMessage($myOrders, '200');
+    }
+
+    public function sendNotificationToAdmin($retail_dealer_id, $company_id)
+    {
+        $retail_dealer = RetailDealer::find($retail_dealer_id);
+        $title = "New order!";
+        $body = "You have a new order from " . $retail_dealer->first_name . " " . $retail_dealer->last_name . "";
+        $type = "order";
+        $admins = CompanyUser::where('company_id', $company_id)
+        ->where('user_type', Config::get('constants.company.users.admin_type'))->get();
+
+        foreach ($admins as $admin) {
+            (new static)->sendNotification($admin->firebasetoken, $title, $body,  $type, $admin->id); //send notification
+            $notification = new notifications();
+            $notification->user_id = $admin->id;
+            $notification->title = $title;
+            $notification->body = $body;
+            $notification->type = "Dealer";
+            $notification->save();
+        }
     }
 }

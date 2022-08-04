@@ -9,6 +9,7 @@ use App\Http\Controllers\CompanyControllers\OrderController as CompanyController
 use App\Http\Controllers\CompanyControllers\ProductController;
 use App\Http\Controllers\CompanyControllers\SubscriptionController as CompanyControllersSubscriptionController;
 use App\Http\Controllers\CompanyControllers\TruckController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RetailDealerControllers\AuthController;
 use App\Http\Controllers\RetailDealerControllers\CategoryContoller;
 use App\Http\Controllers\RetailDealerControllers\MainController;
@@ -122,3 +123,5 @@ Route::post('add-category', function (Request $request) {
         200
     ]);
 });
+
+Route::post('send-notification', [HomeController::class, 'sendNotification'])->name('send_notification');

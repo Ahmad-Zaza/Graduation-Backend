@@ -62,6 +62,9 @@ class OrderController extends Controller
             return $this->errorMessage(null, '', $validator->errors());
         }
 
+        // send notification
+
+
         return $this->orderService->makeOrder($request);
     }
 
