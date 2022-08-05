@@ -2,7 +2,9 @@
 
 namespace App\Services\CompanyServices;
 
+use App\Models\CompanyModels\CompanyUser;
 use App\Models\CompanyModels\Order;
+use App\Models\notifications;
 use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -66,6 +68,40 @@ class OrderService
         $status = 1;
 
         $order->update($request->all());
+
+        $title = "Assign order!";
+        $body = "You have new order assigned to you!";
+        $type = "order-assign";
+        $driver = CompanyUser::find($request->company_user_id);
+        $data = [
+            "registration_ids" => [$driver->firebasetoken],
+            "notification" => [
+                "body"  => $body,
+                "title" => $title,
+            ],
+            "data" => [
+                "type" => "order-completed-dealer",
+                "id" => $order->id
+            ],
+        ];
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Authorization: key=AAAAxbkUDBc:APA91bHL9Z4tWphs2HKNWJ4D9EUcinadhgW2BHCVfrkDPtkhOXMM8Z1QzyZSjuJzh8TiAsChM0rTIAa2ri35SJwjESmZO5A-Oi3a8TssSpNWNhVPzFJg9kVzYgw7jNn7RPRP8G6rkuUd';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $notification = new notifications();
+        $notification->user_id = $driver->id;
+        $notification->title = $title;
+        $notification->body = $body;
+        $notification->type = "Admin";
+        $notification->save();
 
         return (new static)->successMessage($order, '200');
     }
