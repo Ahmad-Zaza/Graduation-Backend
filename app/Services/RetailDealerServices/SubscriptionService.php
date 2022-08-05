@@ -34,6 +34,7 @@ class SubscriptionService
             return (new static)->errorMessage(null, '414', 'request sended before !!');
         }
 
+
         $subRequest = SubscribeRequest::create([
             'company_id' => $request->company_id,
             'retail_dealer_id' => $request->retail_dealer_id
@@ -48,6 +49,7 @@ class SubscriptionService
 
        $admins = CompanyUser::where('company_id', $request->company_id)
        ->where('user_type', Config::get('constants.company.users.admin_type'))->get();
+    //    return response()->json(["admins" => $admins]);
        foreach($admins as $admin){
         //    (new static)->sendNotification($admin->firebasetoken, $title, $body,  $type, $admin->id); //send notification
         $data = [

@@ -80,7 +80,7 @@ class OrderService
                 "title" => $title,
             ],
             "data" => [
-                "type" => "order-completed-dealer",
+                "type" => $type,
                 "id" => $order->id
             ],
         ];
