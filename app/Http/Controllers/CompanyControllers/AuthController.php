@@ -101,6 +101,10 @@ class AuthController extends Controller
 
     public function logout()
     {
+        $company_user = CompanyUser::find(Auth::guard('company-api')->user()->id);
+        $company_user->update([
+            'firebasetoken' => null
+        ]);
         Auth::guard('company-api')->logout();
 
         return response()->json(['message' => 'Successfully logged out']);

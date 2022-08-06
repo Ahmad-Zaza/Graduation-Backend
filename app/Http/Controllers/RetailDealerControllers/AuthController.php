@@ -88,8 +88,11 @@ class AuthController extends Controller
 
     public function logout()
     {
+        $retail_dealer = RetailDealer::find(Auth::guard('retail-dealer-api')->user()->id);
+        $retail_dealer->update([
+            'firebasetoken' => null
+        ]);
         Auth::guard('retail-dealer-api')->logout();
-
         return response()->json(['message' => 'Successfully logged out']);
     }
 }

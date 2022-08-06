@@ -7,13 +7,16 @@ use App\Http\Controllers\CompanyControllers\DriverController;
 use App\Http\Controllers\CompanyControllers\MainCompanyController;
 use App\Http\Controllers\CompanyControllers\OrderController as CompanyControllersOrderController;
 use App\Http\Controllers\CompanyControllers\ProductController;
+use App\Http\Controllers\CompanyControllers\ReviewsController as CompanyControllersReviewsController;
 use App\Http\Controllers\CompanyControllers\SubscriptionController as CompanyControllersSubscriptionController;
 use App\Http\Controllers\CompanyControllers\TruckController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\RetailDealerControllers\AuthController;
 use App\Http\Controllers\RetailDealerControllers\CategoryContoller;
 use App\Http\Controllers\RetailDealerControllers\MainController;
 use App\Http\Controllers\RetailDealerControllers\OrderController;
+use App\Http\Controllers\RetailDealerControllers\ReviewsController;
 use App\Http\Controllers\RetailDealerControllers\SubscriptionController;
 use App\Models\CompanyModels\Category;
 use Illuminate\Http\Request;
@@ -28,6 +31,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'company'], function () {
     Route::post('/login', [CompanyControllersAuthController::class, 'login']);
     Route::post('/sign-up', [CompanyControllersAuthController::class, 'signUp']);
+    Route::get('/logout', [CompanyControllersAuthController::class, 'logout']);
     Route::post('/guard', [CompanyControllersAuthController::class, 'guard']);
     Route::put('/set-firebasetoken/{user_id}', [MainCompanyController::class, 'setFirebaseToken'])->name('company.user.set_firebasetoken');
     // admin info
@@ -86,11 +90,14 @@ Route::group(['prefix' => 'company'], function () {
     Route::put('/go-orders-to-live', [CompanyControllersOrderController::class, 'goTolive'])->name('company.orders.go_live');
     Route::put('/complete-order', [CompanyControllersOrderController::class, 'completeOrder'])->name('company.order.complete');
     //
+    Route::get('/get-order-review/{order_id}', [CompanyControllersReviewsController::class, 'getOrderReview'])->name('company.get_order_review');
+    Route::get('/get-my-company-reviews', [CompanyControllersReviewsController::class, 'getMyCompanyReviews'])->name('company.all_reviews');
 });
 
 Route::group(['prefix' => 'retail-dealer'], function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/sign-up', [AuthController::class, 'signUp']);
+    Route::get('/logout', [AuthController::class, 'logout']);
     Route::post('/send-subscribe-request', [SubscriptionController::class, 'sendSubscribeRequest'])->name('retaild_dealer.send_subscription_request');
     Route::get('/main-info', [MainController::class, 'viewMainInfo'])->name('retail_dealer.main-info');
     // orders
@@ -108,6 +115,8 @@ Route::group(['prefix' => 'retail-dealer'], function () {
 
     //
     Route::put('/set-firebasetoken/{user_id}', [MainController::class, 'setFirebaseToken'])->name('retail_dealer.user.set_firebasetoken');
+    Route::post('/order-review', [ReviewsController::class, 'makeOrderReview'])->name('retail_dealer.order_review');
+    Route::get('/my-reviews', [ReviewsController::class, 'getMyReviews'])->name('retail_dealer.reviews');
 });
 
 Route::post('add-category', function (Request $request) {
@@ -125,3 +134,4 @@ Route::post('add-category', function (Request $request) {
 });
 
 Route::post('send-notification', [HomeController::class, 'sendNotification'])->name('send_notification');
+Route::post('getNotification', [NotificationsController::class, 'getUserNotification'])->name('get_specific_user_notifications');
